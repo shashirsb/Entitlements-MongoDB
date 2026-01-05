@@ -29,7 +29,7 @@ import pprint
 # ==========================================
 # "background"  -> rely on change-stream compiler
 # "direct"      -> call recompute_user_entitlements() explicitly
-RECOMPUTE_MODE = "background"   # or "direct"
+RECOMPUTE_MODE = "direct"   # or "direct"
 
 if RECOMPUTE_MODE == "direct":
     # Import only when needed
