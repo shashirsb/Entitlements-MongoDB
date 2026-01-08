@@ -1,9 +1,26 @@
 Client (45K)
  └── Products (what the client can use) (20K)
-      └── Accounts / Arrangements (where the product applies)
-           └── Users  / User Groups (who can act) (500K / ??K)
+      └── Accounts / Arrangements (where the product applies)  (500K / ??K)
+           └── Users  / User Groups (who can act) (1000)
                 └── Functions (what actions are allowed)
 
+UPFA
+
+ User A  - E1
+ User Group  - E1
+
+
+
+
+===================
+Client (45K)
+└── Users  / User Groups (who can act) (500K / ??K)
+       └── Products (what the client can use) (20K)
+               └── Functions (what actions are allowed)
+                     └── Accounts / Arrangements (where the product applies)
+           
+
+  ==================              
 
 
 Client defines what is possible → Accounts define where → User/Group define who 

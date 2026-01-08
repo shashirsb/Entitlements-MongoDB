@@ -1,0 +1,91 @@
+Role Based
+
+======================
+
+Client
+ ├─ Account
+ │   └─ UserAccountAccess
+ └─ User
+     ├─ UserRole → Role
+     │     └─ RoleProduct → Product
+     │           └─ ProductFunction → Function
+     │                 └─ Function Mask (permissionMask, limit)
+     │
+     └─ UserEntitlement
+          • effectiveMask
+          • effectiveLimit
+          • source = {role | custom}
+Role
+Dimention
+Tree 
+
+==================================
+
+System Agnostic
+
+==================================
+
+Client
+ └─ User
+     └─ UserRole → Role
+           └─ RoleDimensionGrant
+                 └─ Dimensions[]
+                 └─ permissionMask
+                 └─ limit (optional)
+
+Compiler → merges dimensions → produces effectiveMask / effectiveLimit
+
+////
+
+{
+  dim
+  "clientId": "CLIENT_1",
+  "userId": "USER_99",
+
+  "functions": {
+    "functionCode": "INITIATE",
+    "mask": 3
+  },
+
+  "product": "PAY",
+  "account": "ACC_1001",
+
+  "effectiveMask": 3,
+  "effectiveLimit": 100000
+}
+
+
+Role
+ └─ RoleDimensionGrant
+      ├─ roleId
+      ├─ dimensions (key-value map)
+      ├─ permissionMask
+      └─ limit
+
+User
+ └─ UserEntitlement (materialized)
+      ├─ userId
+      ├─ dimensions (same structure)
+      ├─ effectiveMask
+      └─ effectiveLimit
+
+
+UPFA
+
+
+
+[product + function]  > arragement 
+[Channel + function]
+
+[merchant + product + function] > arrangement
+
+
+
+Tejas / Vijay > Sumeet
+
+Sumit > Rush CBT manages channel
+
+Rush > Sri payment t3chnology CTo
+
+
+mahi 

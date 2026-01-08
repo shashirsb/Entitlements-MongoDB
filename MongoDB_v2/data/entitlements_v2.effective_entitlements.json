@@ -1,0 +1,3212 @@
+[{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158df7"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_1767607191",
+  "productCode": "MERCH",
+  "effectiveMask": 2,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 2
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158df8"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_0",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158df9"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_1",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158dfa"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_10",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158dfb"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_11",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158dfc"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_12",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158dfd"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_13",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158dfe"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_14",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158dff"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_15",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e00"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_16",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e01"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_17",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e02"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_18",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e03"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_19",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e04"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_2",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e05"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_20",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e06"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_21",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e07"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_3",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e08"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_4",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e09"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_5",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e0a"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_6",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e0b"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_7",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e0c"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_8",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e0d"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_4956_9",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e0e"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_1767607151",
+  "productCode": "PAY",
+  "effectiveMask": 1,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 1
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e0f"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_1767607155",
+  "productCode": "PAY",
+  "effectiveMask": 1,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 1
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e10"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_0",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e11"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_1",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e12"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_10",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e13"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_11",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e14"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_12",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e15"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_13",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e16"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_14",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e17"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_15",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e18"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_16",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e19"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_17",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e1a"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_18",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e1b"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_19",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e1c"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_2",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e1d"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_20",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e1e"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_21",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e1f"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_22",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e20"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_23",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e21"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_24",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e22"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_25",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e23"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_26",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e24"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_27",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e25"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_28",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e26"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_29",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e27"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_3",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e28"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_30",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e29"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_31",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e2a"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_32",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e2b"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_33",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e2c"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_35",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e2d"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_36",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e2e"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_37",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e2f"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_38",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e30"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_39",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e31"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_4",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e32"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_40",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e33"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_41",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e34"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_42",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e35"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_43",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e36"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_44",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e37"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_45",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e38"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_46",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e39"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_47",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e3a"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_48",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e3b"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_49",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e3c"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_5",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e3d"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_6",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e3e"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_7",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e3f"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_8",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b8bd41fa598367b158e40"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "85a2e5343f32bcbfcc3f3190"
+  },
+  "arrangementId": "ACC_SHARED_9",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.774Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e41"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_0",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e42"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_1",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e43"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_10",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e44"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_11",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e45"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_12",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e46"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_13",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e47"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_14",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e48"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_15",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e49"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_16",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e4a"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_17",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e4b"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_18",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e4c"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_2",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e4d"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_3",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e4e"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_4",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e4f"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_5",
+  "productCode": "MERCH",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e50"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_6",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e51"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_7",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e52"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_8",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e53"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_7595_9",
+  "productCode": "PAY",
+  "effectiveMask": 3,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 3
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e54"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_1767607151",
+  "productCode": "PAY",
+  "effectiveMask": 1,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 1
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e55"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_1767607155",
+  "productCode": "PAY",
+  "effectiveMask": 1,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 1
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e56"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_0",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e57"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_1",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e58"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_10",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e59"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_11",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e5a"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_12",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e5b"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_13",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e5c"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_14",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e5d"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_15",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e5e"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_16",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e5f"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_17",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e60"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_18",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e61"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_19",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e62"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_2",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e63"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_20",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e64"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_21",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e65"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_22",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e66"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_23",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e67"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_24",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e68"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_25",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e69"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_26",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e6a"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_27",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e6b"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_28",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e6c"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_29",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e6d"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_3",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e6e"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_30",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e6f"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_31",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e70"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_32",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e71"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_33",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e72"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_35",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e73"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_36",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e74"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_37",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e75"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_38",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e76"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_39",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e77"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_4",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e78"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_40",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e79"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_41",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e7a"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_42",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e7b"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_43",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e7c"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_44",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e7d"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_45",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e7e"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_46",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e7f"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_47",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e80"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_48",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e81"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_49",
+  "productCode": "MERCH",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e82"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_5",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e83"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_6",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e84"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_7",
+  "productCode": "PAY",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e85"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_8",
+  "productCode": "PAY",
+  "effectiveMask": 4,
+  "deny": false,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 4
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b91e91fa598367b158e86"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_SHARED_9",
+  "productCode": "MERCH",
+  "effectiveMask": 8,
+  "deny": true,
+  "trace": [
+    {
+      "source": "GROUP:7c3416845858371e1cbfd121",
+      "mask": 8
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b923d1fa598367b158e87"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_1767608809",
+  "productCode": "PAY",
+  "effectiveMask": 2,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 2
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "695b923d1fa598367b158e88"
+  },
+  "clientId": "CLIENT_0",
+  "userId": {
+    "$oid": "465136e315b1724f10ffb35a"
+  },
+  "arrangementId": "ACC_1767608893",
+  "productCode": "MERCH",
+  "effectiveMask": 2,
+  "deny": false,
+  "trace": [
+    {
+      "source": "USER",
+      "mask": 2
+    }
+  ],
+  "lastUpdated": {
+    "$date": "2026-01-05T10:28:13.483Z"
+  }
+}]
