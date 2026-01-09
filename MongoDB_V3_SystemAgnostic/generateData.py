@@ -46,79 +46,22 @@ def get_arrangement_keys(defn):
     return defn.get("arrangements") or defn.get("dimensionMap") or []
 
 # =====================================================
-# INDEX SETUP (RUNTIME + OPERATIONS a–i)
+# INDEX SETUP
 # =====================================================
 def setup_indexes():
-    # ---- effective_entitlements (runtime hot path) ----
-    db.effective_entitlements.create_index(
-        [("clientId", 1), ("userId", 1)],
-        name="ee_by_user"
-    )
-    db.effective_entitlements.create_index(
-        [("clientId", 1), ("userId", 1), ("functionCode", 1)],
-        name="ee_by_user_function"
-    )
-    db.effective_entitlements.create_index(
-        [("clientId", 1), ("userId", 1), ("sourceMode", 1)],
-        name="ee_by_user_sourceMode"
-    )
+    # ---- effective_entitlements ----
+    db.effective_entitlements.create_index([("clientId", 1), ("userId", 1), ("system", 1)])
+    db.effective_entitlements.create_index([("clientId", 1), ("userId", 1), ("functionCode", 1)])
 
-    # ---- trace (audit) ----
-    db.trace.create_index(
-        [("clientId", 1), ("userId", 1)],
-        name="trace_by_user"
-    )
-    db.trace.create_index(
-        [("clientId", 1), ("userId", 1), ("functionCode", 1)],
-        name="trace_by_user_function"
-    )
+    # ---- trace ----
+    db.trace.create_index([("clientId", 1), ("userId", 1), ("system", 1)])
 
-    # ---- users ----
-    db.users.create_index(
-        [("clientId", 1), ("mode", 1)],
-        name="users_by_mode"
-    )
+    # ---- user_roles ----
+    db.user_roles.create_index([("clientId", 1), ("userId", 1), ("system", 1)])
+    db.user_roles.create_index([("clientId", 1), ("userId", 1), ("roleId", 1)], unique=True)
 
-    # ---- user_roles (a, b) ----
-    db.user_roles.create_index(
-        [("clientId", 1), ("userId", 1)],
-        name="user_roles_by_user"
-    )
-    db.user_roles.create_index(
-        [("clientId", 1), ("roleId", 1)],
-        name="user_roles_by_role"
-    )
-    db.user_roles.create_index(
-        [("clientId", 1), ("userId", 1), ("roleId", 1)],
-        unique=True,
-        name="user_role_unique"
-    )
-
-    # ---- roles (c) ----
-    db.roles.create_index(
-        [("clientId", 1)],
-        name="roles_by_client"
-    )
-
-    # ---- role_dimension_grants (d, e, f) ----
-    db.role_dimension_grants.create_index(
-        [("clientId", 1), ("roleId", 1)],
-        name="rdg_by_role"
-    )
-    db.role_dimension_grants.create_index(
-        [("clientId", 1), ("roleId", 1), ("function.code", 1)],
-        name="rdg_by_role_function"
-    )
-
-    # ---- user_dimension_overrides (g, h, i) ----
-    db.user_dimension_overrides.create_index(
-        [("clientId", 1), ("userId", 1)],
-        name="udo_by_user"
-    )
-    db.user_dimension_overrides.create_index(
-        [("clientId", 1), ("userId", 1), ("function.code", 1)],
-        name="udo_by_user_function"
-    )
+    # ---- role_dimension_grants ----
+    db.role_dimension_grants.create_index([("clientId", 1), ("roleId", 1), ("system", 1)])
 
     print("✓ Indexes ensured")
 
@@ -145,6 +88,9 @@ def startup_mode():
 # =====================================================
 def select_dimension_definition():
     defs = list(db.dimension_definitions.find({}, {"_id": 0}))
+    if not defs:
+        print("❌ No dimension definitions found. Please run generateDim.py first.")
+        exit()
     print("\n=== AVAILABLE DIMENSION DEFINITIONS ===\n")
     for i, d in enumerate(defs):
         print(f"[{i}] {minify(d)}")
@@ -157,36 +103,36 @@ def create_client(system):
     cid = "CLIENT_1"
     db.clients.update_one(
         {"_id": cid},
-        {"$setOnInsert": {"system": system, "createdAt": datetime.utcnow()}},
+        {"$set": {"system": system, "createdAt": datetime.utcnow()}},
         upsert=True
     )
     return cid
 
-def create_users(cid):
+def create_users(cid, system):
     users = [
-        {"_id": "USER_1", "clientId": cid, "mode": "ROLE"},
-        {"_id": "USER_2", "clientId": cid, "mode": "CUSTOM"},
+        {"_id": "USER_1", "clientId": cid, "system": system, "mode": "ROLE"},
+        {"_id": "USER_2", "clientId": cid, "system": system, "mode": "CUSTOM"},
     ]
     for u in users:
         db.users.update_one({"_id": u["_id"]}, {"$set": u}, upsert=True)
     return users
 
-def create_roles(cid):
+def create_roles(cid, system):
     roles = []
     for i in range(ROLES_PER_CLIENT):
-        r = {"_id": f"{cid}_ROLE_{i}", "clientId": cid}
+        r = {"_id": f"{cid}_ROLE_{i}", "clientId": cid, "system": system}
         db.roles.update_one({"_id": r["_id"]}, {"$set": r}, upsert=True)
         roles.append(r)
     return roles
 
-def assign_user_roles(cid, users, roles):
+def assign_user_roles(cid, system, users, roles):
     for u in users:
         if u["mode"] != "ROLE":
             continue
         for r in random.sample(roles, random.randint(1, len(roles))):
             db.user_roles.update_one(
                 {"clientId": cid, "userId": u["_id"], "roleId": r["_id"]},
-                {"$setOnInsert": {"createdAt": datetime.utcnow()}},
+                {"$set": {"system": system, "createdAt": datetime.utcnow()}},
                 upsert=True
             )
 
@@ -212,6 +158,7 @@ def create_role_dimension_grants(cid, defn, roles):
                 {
                     "clientId": cid,
                     "roleId": r["_id"],
+                    "system": defn["system"],
                     "function.code": grant["function"]["code"],
                     "dimensions": grant["dimensions"],
                     "arrangements": grant["arrangements"]
@@ -245,6 +192,7 @@ def create_user_overrides(cid, users, defn):
             {
                 "clientId": cid,
                 "userId": u["_id"],
+                "system": defn["system"],
                 "function.code": override["function"]["code"],
                 "dimensions": override["dimensions"],
                 "arrangements": override["arrangements"]
@@ -254,13 +202,14 @@ def create_user_overrides(cid, users, defn):
         )
 
 # =====================================================
-# STEP 5 — EFFECTIVE ENTITLEMENTS
+# STEP 5 — EFFECTIVE ENTITLEMENTS (MATERIALIZATION)
 # =====================================================
 def materialize_effective_entitlements(cid, defn):
-    users = list(db.users.find({"clientId": cid}))
-    user_roles = list(db.user_roles.find({"clientId": cid}))
-    grants = list(db.role_dimension_grants.find({"clientId": cid}))
-    overrides = list(db.user_dimension_overrides.find({"clientId": cid}))
+    system = defn["system"]
+    users = list(db.users.find({"clientId": cid, "system": system}))
+    user_roles = list(db.user_roles.find({"clientId": cid, "system": system}))
+    grants = list(db.role_dimension_grants.find({"clientId": cid, "system": system}))
+    overrides = list(db.user_dimension_overrides.find({"clientId": cid, "system": system}))
 
     grants_by_role = {}
     for g in grants:
@@ -323,13 +272,13 @@ def materialize_effective_entitlements(cid, defn):
             effective = {
                 "clientId": cid,
                 "userId": uid,
-                "system": defn["system"],
+                "system": system,
                 "functionCode": fn,
                 "sourceMode": mode,
                 "effectiveMask": DENY_BIT if deny else mask_or,
                 "effectiveLimit": winning_limit,
-                **dict(dims),
-                **dict(arrs),
+                "dimensions": dict(dims),
+                "arrangements": dict(arrs),
                 "generatedAt": datetime.utcnow()
             }
 
@@ -340,9 +289,10 @@ def materialize_effective_entitlements(cid, defn):
                 {
                     "clientId": cid,
                     "userId": uid,
+                    "system": system,
                     "functionCode": fn,
-                    **dict(dims),
-                    **dict(arrs)
+                    "dimensions": dict(dims),
+                    "arrangements": dict(arrs)
                 },
                 {"$set": effective},
                 upsert=True
@@ -351,7 +301,7 @@ def materialize_effective_entitlements(cid, defn):
             db.trace.insert_one({
                 "clientId": cid,
                 "userId": uid,
-                "system": defn["system"],
+                "system": system,
                 "functionCode": fn,
                 "dimensions": dict(dims),
                 "arrangements": dict(arrs),
@@ -364,21 +314,22 @@ def materialize_effective_entitlements(cid, defn):
 # =====================================================
 def generate():
     startup_mode()
-    setup_indexes()   # 👈 indexes guaranteed before data
+    setup_indexes()
 
     defn = select_dimension_definition()
-    print("\n▶ Selected Definition:")
-    print(minify(defn))
+    system = defn["system"]
+    print(f"\n▶ Selected Definition for System: {system}")
 
-    cid = create_client(defn["system"])
-    users = create_users(cid)
-    roles = create_roles(cid)
-    assign_user_roles(cid, users, roles)
+    cid = create_client(system)
+    users = create_users(cid, system)
+    roles = create_roles(cid, system)
+    assign_user_roles(cid, system, users, roles)
     create_role_dimension_grants(cid, defn, roles)
     create_user_overrides(cid, users, defn)
     materialize_effective_entitlements(cid, defn)
 
     print("\n✅ Generation complete")
+    print(f"System: {system}")
     print("USER_1 → ROLE mode")
     print("USER_2 → CUSTOM mode")
 
