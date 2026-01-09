@@ -177,12 +177,12 @@ The system defaults to a **DENY_BIT = 1**. Here is the standard bit-map used for
 
 ---
 
-## 💻 Installation & Setup
+### 1. Define the System (Dimensions)
 
-1. **Prerequisites:** Python 3.8+ and a MongoDB Cluster (Atlas or Local).
-2. **Dependencies:** ```bash
-pip install pymongo
-```
+Before generating data, you must define what "Dimensions" your system uses. Run the dimension generator:
+
+```bash
+python deltaEntitlement.py
 
 ```
 

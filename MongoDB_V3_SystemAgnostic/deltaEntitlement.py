@@ -1,479 +1,308 @@
 """
-deltaEntitlement.py
-===================
-
-Authoring + direct recompute delta mutation layer
-for Entitlement v3 (system-agnostic).
-
-✔ Implements operations a–g
-✔ Direct cascading recompute (no background jobs)
-✔ Before / After diff
-✔ Trace generation
-✔ Safe upserts
-✔ Multi-role conflict resolution
-✔ AUTO-SWITCH user mode on role add (CUSTOM → ROLE)
+deltaEntitlement_V12_Comprehensive.py
+======================================
+✔ FULL MENU: a, b, c, d, e, g, h, i, j, k, l, m, n
+✔ ACCESS PATTERNS: Pattern-based discovery for Client and User insights.
+✔ DENY_BIT = 1: Security dominance logic using the first bit.
+✔ AUDIT TRACING: Before/After snapshots for every change.
+✔ SMART PROMPTS: Fuzzy search filtering for all database lookups.
 """
 
+import hashlib
+import json
+import sys
 from datetime import datetime
-from pymongo import MongoClient
-import time
+from pymongo import MongoClient, UpdateOne, DeleteOne, InsertOne
 
 # =====================================================
-# CONFIG
+# CONFIGURATION
 # =====================================================
 MONGO_URI = "mongodb+srv://main_user:main_user1@demo.kssen.mongodb.net/?retryWrites=true&w=majority"
 DB_NAME = "entitlement_v3_agnostic"
-DENY_BIT = 0b1000
+DENY_BIT = 1  # 0b0001: Dominant Security Bit
 
-# =====================================================
-# DB INIT
-# =====================================================
 client = MongoClient(MONGO_URI)
 db = client[DB_NAME]
 
-authoring_writes = 0
-recompute_timings = []
-
 # =====================================================
-# INPUT HELPERS
+# SMART PROMPT HELPERS (FUZZY SEARCH)
 # =====================================================
-def prompt(msg):
-    v = input(msg).strip()
-    if not v:
-        raise ValueError("Input cannot be empty")
-    return v
+def select_from_db(collection, filter_doc, label_field, prompt_msg):
+    items = list(db[collection].find(filter_doc))
+    if not items:
+        print(f"--- No {collection} found ---")
+        return input(f"Enter {prompt_msg} manually: ").strip()
+    
+    search = input(f"Search {prompt_msg} (Enter to list all): ").strip().lower()
+    filtered = [i for i in items if search in str(i[label_field]).lower()]
+    
+    if not filtered:
+        print("No matches found. Showing all.")
+        filtered = items
 
-def prompt_int(msg):
-    return int(prompt(msg))
+    for i, item in enumerate(filtered):
+        print(f" [{i}] {item[label_field]}")
+    
+    choice = input(f"Select {prompt_msg} (index): ").strip()
+    try:
+        return filtered[int(choice)][label_field]
+    except (ValueError, IndexError):
+        return search
+
+def get_context():
+    cid = "CLIENT_1"
+    sys_n = select_from_db("dimension_definitions", {}, "system", "System")
+    return cid, sys_n
 
 def prompt_dict(msg):
-    print(msg)
-    print("Enter key=value pairs, empty line to finish")
-    out = {}
+    print(f"Enter {msg} (key=value, empty line to finish):")
+    d = {}
     while True:
         line = input("> ").strip()
-        if not line:
-            break
-        k, v = line.split("=", 1)
-        out[k.strip()] = v.strip()
-    return out
+        if not line: break
+        if "=" in line:
+            parts = line.split("=", 1)
+            d[parts[0].strip()] = parts[1].strip()
+    return d
 
 # =====================================================
-# VALIDATION
+# VERBOSE DIFF & HASH HELPERS
 # =====================================================
-def assert_user(clientId, userId):
-    if not db.users.find_one({"_id": userId, "clientId": clientId}):
-        raise ValueError(f"User not found: {userId}")
+def get_content_hash(doc):
+    if not doc: return None
+    payload = {
+        "m": doc.get("effectiveMask"),
+        "l": doc.get("effectiveLimit"),
+        "s": doc.get("sourceMode"),
+        "r": doc.get("roleId")
+    }
+    return hashlib.md5(json.dumps(payload, sort_keys=True, default=str).encode()).hexdigest()
 
-def assert_role(clientId, roleId):
-    if not db.roles.find_one({"_id": roleId, "clientId": clientId}):
-        raise ValueError(f"Role not found: {roleId}")
+def get_id_string(system, fn, dims, arrs):
+    d_str = ",".join([f"{k}:{v}" for k, v in sorted(dims.items())])
+    a_str = ",".join([f"{k}:{v}" for k, v in sorted(arrs.items())])
+    return f"Sys:{system} | Fn:{fn} | Dims({d_str}) | Arrs({a_str})"
 
-# =====================================================
-# EFFECTIVE SNAPSHOT + DIFF
-# =====================================================
-def fetch_effective_map(clientId, userId):
-    out = {}
-    for e in db.effective_entitlements.find(
-        {"clientId": clientId, "userId": userId}, {"_id": 0}
-    ):
-        key = (
-            e["functionCode"],
-            tuple(sorted(
-                (k, v) for k, v in e.items()
-                if k not in {
-                    "clientId", "userId", "system",
-                    "functionCode", "effectiveMask",
-                    "effectiveLimit", "generatedAt",
-                    "sourceMode", "roleId"
-                }
-            ))
-        )
-        out[key] = (e["effectiveMask"], e["effectiveLimit"])
-    return out
-
-def diff_maps(before, after):
-    removed = before.keys() - after.keys()
-    added = after.keys() - before.keys()
-    common = before.keys() & after.keys()
-
-    if removed:
-        print("\n❌ REMOVED")
-        for k in removed:
-            print(" -", k)
-
-    if added:
-        print("\n✅ ADDED")
-        for k in added:
-            print(" +", k, "=>", after[k])
-
-    for k in common:
-        if before[k] != after[k]:
-            print("\n🔄 CHANGED")
-            print(" *", k, ":", before[k], "→", after[k])
+def decode_mask(mask):
+    if mask & 1: return "⛔ DENIED (Bit 1)"
+    parts = []
+    if mask & 2: parts.append("Write")
+    if mask & 4: parts.append("Approve")
+    if mask & 8: parts.append("Execute")
+    return " + ".join(parts) if parts else "No Perms"
 
 # =====================================================
-# DIRECT RECOMPUTE ENGINE
+# CORE ENGINE: MINIMAL-TOUCH RECOMPUTE
 # =====================================================
-def recompute_latencies(clientId, userId):
-    start = time.time()
+def recompute_user_minimal(session, clientId, userId, system):
+    print(f"\n--- 🔎 RECOMPUTE: {userId} | System: {system} ---")
+    user = db.users.find_one({"_id": userId, "clientId": clientId}, session=session)
+    if not user: return
+    mode = user.get("mode", "ROLE")
 
-    user = db.users.find_one({"_id": userId, "clientId": clientId})
-    if not user:
-        return
-
-    mode = user["mode"]
-
-    db.effective_entitlements.delete_many(
-        {"clientId": clientId, "userId": userId}
-    )
+    current_docs = list(db.effective_entitlements.find({"clientId": clientId, "userId": userId, "system": system}, session=session))
+    before_map = {get_id_string(system, d["functionCode"], d.get("dimensions", {}), d.get("arrangements", {})): d for d in current_docs}
 
     if mode == "CUSTOM":
-        sources = list(db.user_dimension_overrides.find(
-            {"clientId": clientId, "userId": userId}
-        ))
+        sources = list(db.user_entitlements.find({"clientId": clientId, "userId": userId, "system": system}, session=session))
     else:
-        roleIds = [
-            r["roleId"]
-            for r in db.user_roles.find(
-                {"clientId": clientId, "userId": userId}
-            )
-        ]
-        sources = list(db.role_dimension_grants.find(
-            {"clientId": clientId, "roleId": {"$in": roleIds}}
-        ))
+        role_ids = [r["roleId"] for r in db.user_roles.find({"clientId": clientId, "userId": userId, "system": system}, session=session)]
+        sources = list(db.role_entitlements.find({"clientId": clientId, "roleId": {"$in": role_ids}, "system": system}, session=session))
 
     grouped = {}
-    for g in sources:
-        key = (
-            g["function"]["code"],
-            tuple(sorted(g["dimensions"].items())),
-            tuple(sorted(g.get("arrangements", {}).items()))
-        )
-        grouped.setdefault(key, []).append(g)
+    for s in sources:
+        key = (s["function"]["code"], tuple(sorted(s["dimensions"].items())), tuple(sorted(s.get("arrangements", {}).items())))
+        grouped.setdefault(key, []).append(s)
 
-    for (fn, dims, arrs), entries in grouped.items():
-        deny = False
-        mask_or = 0
-        winning_limit = None
-        winning_role = None
-        trace_entries = []
+    target_map, bulk_ee, bulk_trace = {}, [], []
 
-        for g in entries:
-            f = g["function"]
-            if f["permissionMask"] & DENY_BIT:
-                deny = True
-            mask_or |= f["permissionMask"]
+    for (fn, dims_t, arrs_t), entries in grouped.items():
+        dims, arrs = dict(dims_t), dict(arrs_t)
+        ik = get_id_string(system, fn, dims, arrs)
+        
+        mask_or, deny = 0, False
+        for e in entries:
+            m = e["function"]["permissionMask"]
+            if m & DENY_BIT: deny = True
+            mask_or |= m
+        
+        win_lim = min(e["function"]["limit"] for e in entries)
+        win_rid = next((e.get("roleId") for e in entries if e["function"]["limit"] == win_lim), None)
 
-            if winning_limit is None or f["limit"] < winning_limit:
-                winning_limit = f["limit"]
-                winning_role = g.get("roleId")
-
-            trace_entries.append({
-                "source": mode,
-                "roleId": g.get("roleId"),
-                "mask": f["permissionMask"],
-                "limit": f["limit"]
-            })
-
-        effective = {
-            "clientId": clientId,
-            "userId": userId,
-            "system": entries[0]["system"],
-            "functionCode": fn,
-            "sourceMode": mode,
-            "effectiveMask": DENY_BIT if deny else mask_or,
-            "effectiveLimit": winning_limit,
-            "generatedAt": datetime.utcnow(),
-            **dict(dims),
-            **dict(arrs)
+        target_doc = {
+            "clientId": clientId, "userId": userId, "system": system, "functionCode": fn, "sourceMode": mode,
+            "effectiveMask": DENY_BIT if deny else mask_or, "effectiveLimit": win_lim,
+            "dimensions": dims, "arrangements": arrs, "roleId": win_rid if mode == "ROLE" else None
         }
+        
+        existing = before_map.get(ik)
+        target_map[ik] = target_doc
 
-        if mode == "ROLE":
-            effective["roleId"] = winning_role
+        if get_content_hash(existing) != get_content_hash(target_doc):
+            label = "NEW" if not existing else "CHANGE"
+            diff = []
+            if existing:
+                if existing["effectiveMask"] != target_doc["effectiveMask"]: diff.append(f"Mask: {existing['effectiveMask']}->{target_doc['effectiveMask']}")
+                if existing["effectiveLimit"] != target_doc["effectiveLimit"]: diff.append(f"Limit: {existing['effectiveLimit']}->{target_doc['effectiveLimit']}")
+            
+            print(f"   [{label}] {ik} ({' | '.join(diff) if diff else 'Initial'}) -> {decode_mask(target_doc['effectiveMask'])}")
+            target_doc["generatedAt"] = datetime.utcnow()
+            bulk_ee.append(UpdateOne({"clientId": clientId, "userId": userId, "system": system, "functionCode": fn, "dimensions": dims, "arrangements": arrs}, {"$set": target_doc}, upsert=True))
+            bulk_trace.append(InsertOne({"clientId": clientId, "userId": userId, "system": system, "event": label, "before": existing, "after": target_doc, "ts": datetime.utcnow()}))
+        else:
+            print(f"   [=] STABLE : {ik}")
 
-        db.effective_entitlements.insert_one(effective)
+    for ik, doc in before_map.items():
+        if ik not in target_map:
+            print(f"   [-] DELETE : {ik}")
+            bulk_ee.append(DeleteOne({"_id": doc["_id"]}))
 
-        db.trace.insert_one({
-            "clientId": clientId,
-            "userId": userId,
-            "functionCode": fn,
-            "dimensions": dict(dims),
-            "arrangements": dict(arrs),
-            "entries": trace_entries,
-            "generatedAt": datetime.utcnow()
-        })
-
-    recompute_timings.append(time.time() - start)
-
-# =====================================================
-# CASCADING WRAPPER
-# =====================================================
-def cascade_and_diff(clientId, impacted_users, mutation_fn):
-    global authoring_writes, recompute_timings
-
-    recompute_timings = []
-
-    start_wall = time.time()
-
-    before = {
-        u: fetch_effective_map(clientId, u)
-        for u in impacted_users
-    }
-
-    mutation_fn()
-    authoring_writes += 1
-
-    for u in impacted_users:
-        recompute_latencies(clientId, u)
-
-    after = {
-        u: fetch_effective_map(clientId, u)
-        for u in impacted_users
-    }
-
-    for u in impacted_users:
-        print(f"\n=== DIFF FOR USER {u} ===")
-        diff_maps(before[u], after[u])
-
-    duration = time.time() - start_wall
-    total = len(recompute_timings)
-    mean_ms = (sum(recompute_timings) / total * 1000) if total else 0
-    tps = total / duration if duration else 0
-
-    print("\n📊 TS DETAILS")
-    print("-----------------------------------")
-    print(f"Authoring Writes     : {authoring_writes}")
-    print(f"Users Recomputed     : {total}")
-    print(f"Mean Latency (ms)    : {mean_ms:.2f}")
-    print(f"Wall Time (s)        : {duration:.2f}")
-    print(f"Effective TPS        : {tps:.2f}")
+    if bulk_ee: db.effective_entitlements.bulk_write(bulk_ee, session=session)
+    if bulk_trace: db.trace.bulk_write(bulk_trace, session=session)
 
 # =====================================================
-# DELTA OPERATIONS (a–g)
+# ACCESS PATTERN DASHBOARD (Option n)
 # =====================================================
-def add_user_to_role():
-    clientId = prompt("ClientId: ")
-    userId = prompt("UserId: ")
-    roleId = prompt("RoleId: ")
+def ui_access_pattern_browser():
+    cid = select_from_db("users", {}, "clientId", "Client ID")
+    print(f"\n--- 🌐 ACCESS PATTERN DASHBOARD (Target: {cid}) ---")
+    print(" 1. Get Client Entitlements (Fetch ALL Materialized for Client)")
+    print(" 2. Get Client Dimension Arrangements (Discovery)")
+    print(" 3. Get All Client Users")
+    print(" 4. Get User Entitlements (Materialized for specific User)")
+    print(" 5. Get User Arrangement for Specific Dimension")
+    
+    choice = input("\nSelect Pattern (1-5): ")
 
-    assert_user(clientId, userId)
-    assert_role(clientId, roleId)
+    if choice == "1":
+        # Pattern 1: Get Client Entitlements (From effective_entitlements)
+        print(f"\n--- 🛰️ CLIENT ENTITLEMENTS SCAN: {cid} ---")
+        ee = list(db.effective_entitlements.find({"clientId": cid}))
+        if not ee:
+            print("No materialized entitlements found for this client.")
+        else:
+            for entry in ee:
+                print(f" User: {entry['userId']:<12} | Fn: {entry['functionCode']:<10} | Mask: {entry['effectiveMask']} | Dims: {entry['dimensions']}")
 
-    user = db.users.find_one({"_id": userId, "clientId": clientId})
+    elif choice == "2":
+        # Pattern 2: Client Dimension Arrangement Discovery
+        dk = input("Dimension Key (e.g., product): ")
+        dv = input("Dimension Value (e.g., PRODUCT_5): ")
+        print(f"\n--- 🔍 DISCOVERING ARRANGEMENTS: {cid} | {dk}:{dv} ---")
+        # Logic: Find unique arrangements across all materialized users for this client/dimension
+        query = {"clientId": cid, f"dimensions.{dk}": dv}
+        results = db.effective_entitlements.distinct("arrangements", query)
+        print(f"Found Arrangements: {results if results else 'None'}")
 
-    def mutation():
-        # AUTO SWITCH: CUSTOM → ROLE
-        if user.get("mode") != "ROLE":
-            db.users.update_one(
-                {"_id": userId, "clientId": clientId},
-                {"$set": {"mode": "ROLE", "modeChangedAt": datetime.utcnow()}}
-            )
-            db.user_dimension_overrides.delete_many(
-                {"clientId": clientId, "userId": userId}
-            )
+    elif choice == "3":
+        # Pattern 3: Get All Client Users
+        users = list(db.users.find({"clientId": cid}))
+        print(f"\n--- 👥 USERS FOR {cid} ---")
+        for u in users:
+            print(f" - ID: {u['_id']:<15} | Mode: {u.get('mode')}")
 
-        db.user_roles.update_one(
-            {"clientId": clientId, "userId": userId, "roleId": roleId},
-            {"$setOnInsert": {"createdAt": datetime.utcnow()}},
-            upsert=True
-        )
+    elif choice == "4":
+        # Pattern 4: Get User Entitlements (Materialized)
+        uid = select_from_db("users", {"clientId": cid}, "_id", "User")
+        print(f"\n--- 📄 MATERIALIZED STATE: {uid} ---")
+        ee = list(db.effective_entitlements.find({"userId": uid, "clientId": cid}))
+        for entry in ee:
+            print(f" Fn: {entry['functionCode']:<12} | Mask: {entry['effectiveMask']} | Limit: {entry['effectiveLimit']} | Arrs: {entry['arrangements']}")
 
-    cascade_and_diff(clientId, [userId], mutation)
+    elif choice == "5":
+        # Pattern 5: Get User Arrangement for Specific Dimension
+        uid = select_from_db("users", {"clientId": cid}, "_id", "User")
+        dk = input("Dimension Key (e.g., product): ")
+        dv = input("Dimension Value (e.g., PRODUCT_5): ")
+        print(f"\n--- 📍 USER ARRANGEMENT LOOKUP: {uid} | {dk}:{dv} ---")
+        query = {"userId": uid, "clientId": cid, f"dimensions.{dk}": dv}
+        ee = list(db.effective_entitlements.find(query))
+        for entry in ee:
+            print(f" Fn: {entry['functionCode']:<12} | Arrs: {entry.get('arrangements')}")
+            
+            
+# =====================================================
+# UI OPERATIONS (a-m)
+# =====================================================
+def run_op(clientId, system, impacted_users, mutation_fn):
+    with client.start_session() as session:
+        try:
+            with session.start_transaction():
+                mutation_fn(session)
+                for uid in impacted_users: recompute_user_minimal(session, clientId, uid, system)
+                print(f"\n🚀 Transaction Committed.")
+        except Exception as e: print(f"❌ Failed: {e}")
 
-def remove_user_from_role():
-    clientId = prompt("ClientId: ")
-    userId = prompt("UserId: ")
-    roleId = prompt("RoleId: ")
+def ui_inspect_system():
+    cid, sys_n = get_context()
+    print(f"\n--- ROLE PERSPECTIVE ---")
+    for r in db.roles.find({"clientId": cid, "system": sys_n}):
+        rid = r["_id"]
+        u_assoc = [ur["userId"] for ur in db.user_roles.find({"roleId": rid, "system": sys_n})]
+        print(f"Role: {rid:<25} | Grants: {db.role_entitlements.count_documents({'roleId': rid, 'system': sys_n})} | Users: {', '.join(u_assoc) if u_assoc else '0'}")
+    print(f"\n--- USER PERSPECTIVE ---")
+    for u in db.users.find({"clientId": cid}):
+        roles = [ur["roleId"] for ur in db.user_roles.find({"userId": u["_id"], "system": sys_n})]
+        print(f"User: {u['_id']:<15} ({u.get('mode')}) | Roles: {', '.join(roles)}")
 
-    cascade_and_diff(
-        clientId,
-        [userId],
-        lambda: db.user_roles.delete_one(
-            {"clientId": clientId, "userId": userId, "roleId": roleId}
-        )
-    )
+def ui_add_user_to_role():
+    cid, sys_n = get_context()
+    uid, rid = select_from_db("users", {"clientId": cid}, "_id", "User"), select_from_db("roles", {"clientId": cid, "system": sys_n}, "_id", "Role")
+    run_op(cid, sys_n, [uid], lambda s: (db.users.update_one({"_id": uid}, {"$set": {"mode": "ROLE"}}, session=s), db.user_roles.update_one({"userId": uid, "roleId": rid, "clientId": cid, "system": sys_n}, {"$set": {"assignedAt": datetime.utcnow()}}, upsert=True, session=s)))
 
-def modify_role():
-    clientId = prompt("ClientId: ")
-    roleId = prompt("RoleId: ")
-    updates = prompt_dict("Role fields to update")
+def ui_remove_user_from_role():
+    cid, sys_n = get_context()
+    uid, rid = select_from_db("users", {"clientId": cid}, "_id", "User"), select_from_db("roles", {"clientId": cid, "system": sys_n}, "_id", "Role")
+    run_op(cid, sys_n, [uid], lambda s: db.user_roles.delete_one({"userId": uid, "roleId": rid, "clientId": cid, "system": sys_n}, session=s))
 
-    users = [
-        u["userId"]
-        for u in db.user_roles.find(
-            {"clientId": clientId, "roleId": roleId}
-        )
-    ]
+def ui_add_role_dimension():
+    cid, sys_n = get_context(); rid = select_from_db("roles", {"clientId": cid, "system": sys_n}, "_id", "Role")
+    fn, mask, lim = input("Fn: "), int(input("Mask: ")), int(input("Limit: "))
+    dims, arrs = prompt_dict("Dims"), prompt_dict("Arrs")
+    impacted = [ur["userId"] for ur in db.user_roles.find({"roleId": rid, "system": sys_n})]
+    run_op(cid, sys_n, impacted, lambda s: db.role_entitlements.update_one({"clientId": cid, "roleId": rid, "system": sys_n, "function.code": fn, "dimensions": dims}, {"$set": {"function": {"code": fn, "permissionMask": mask, "limit": lim}, "arrangements": arrs, "system": sys_n}}, upsert=True, session=s))
 
-    cascade_and_diff(
-        clientId,
-        users,
-        lambda: db.roles.update_one(
-            {"_id": roleId, "clientId": clientId},
-            {"$set": updates}
-        )
-    )
+def ui_clone_grants():
+    cid, sys_n = get_context()
+    src, dst = select_from_db("roles", {"clientId": cid, "system": sys_n}, "_id", "Src"), select_from_db("roles", {"clientId": cid, "system": sys_n}, "_id", "Dst")
+    grants = list(db.role_entitlements.find({"roleId": src, "system": sys_n}))
+    def mut(s):
+        for g in grants:
+            new_g = g.copy(); del new_g["_id"]; new_g["roleId"] = dst
+            db.role_entitlements.update_one({"roleId": dst, "function.code": g["function"]["code"], "dimensions": g["dimensions"]}, {"$set": new_g}, upsert=True, session=s)
+    run_op(cid, sys_n, [ur["userId"] for ur in db.user_roles.find({"roleId": dst, "system": sys_n})], mut)
 
-def add_dimension_to_role():
-    clientId = prompt("ClientId: ")
-    roleId = prompt("RoleId: ")
-    system = prompt("System: ")
-    functionCode = prompt("FunctionCode: ")
-    permissionMask = prompt_int("PermissionMask: ")
-    limit = prompt_int("Limit: ")
+def ui_bitwise_demo():
+    print("\n--- 🧠 BITWISE DEMO (DENY=1) ---")
+    m1, m2 = int(input("Mask A: ")), int(input("Mask B: "))
+    final = 1 if (m1 & 1 or m2 & 1) else (m1 | m2)
+    print(f"Result: {bin(final)[2:].zfill(4)} ({decode_mask(final)})")
 
-    dimensions = prompt_dict("Dimensions")
-    arrangements = prompt_dict("Arrangements")
-
-    users = [
-        u["userId"]
-        for u in db.user_roles.find(
-            {"clientId": clientId, "roleId": roleId}
-        )
-    ]
-
-    cascade_and_diff(
-        clientId,
-        users,
-        lambda: db.role_dimension_grants.update_one(
-            {
-                "clientId": clientId,
-                "roleId": roleId,
-                "function.code": functionCode,
-                "dimensions": dimensions,
-                "arrangements": arrangements
-            },
-            {
-                "$setOnInsert": {
-                    "clientId": clientId,
-                    "roleId": roleId,
-                    "system": system,
-                    "function": {
-                        "code": functionCode,
-                        "permissionMask": permissionMask,
-                        "limit": limit
-                    },
-                    "dimensions": dimensions,
-                    "arrangements": arrangements,
-                    "createdAt": datetime.utcnow()
-                }
-            },
-            upsert=True
-        )
-    )
-def add_two_roles_same_mask_diff_limit():
-    clientId = prompt("ClientId: ")
-    userId = prompt("UserId: ")
-    roleId1 = prompt("RoleId_1: ")
-    roleId2 = prompt("RoleId_2: ")
-
-    assert_user(clientId, userId)
-    assert_role(clientId, roleId1)
-    assert_role(clientId, roleId2)
-
-    user = db.users.find_one({"_id": userId, "clientId": clientId})
-
-    def mutation():
-        # Ensure ROLE mode
-        if user.get("mode") != "ROLE":
-            db.users.update_one(
-                {"_id": userId, "clientId": clientId},
-                {"$set": {"mode": "ROLE", "modeChangedAt": datetime.utcnow()}}
-            )
-            db.user_dimension_overrides.delete_many(
-                {"clientId": clientId, "userId": userId}
-            )
-
-        # Add both roles
-        for r in (roleId1, roleId2):
-            db.user_roles.update_one(
-                {"clientId": clientId, "userId": userId, "roleId": r},
-                {"$setOnInsert": {"createdAt": datetime.utcnow()}},
-                upsert=True
-            )
-
-    cascade_and_diff(clientId, [userId], mutation)
-
-def add_dimension_to_user():
-    clientId = prompt("ClientId: ")
-    userId = prompt("UserId: ")
-    system = prompt("System: ")
-    functionCode = prompt("FunctionCode: ")
-    permissionMask = prompt_int("PermissionMask: ")
-    limit = prompt_int("Limit: ")
-
-    dimensions = prompt_dict("Dimensions")
-    arrangements = prompt_dict("Arrangements")
-
-    def mutation():
-        db.users.update_one(
-            {"_id": userId, "clientId": clientId},
-            {"$set": {"mode": "CUSTOM"}}
-        )
-
-        db.user_dimension_overrides.update_one(
-            {
-                "clientId": clientId,
-                "userId": userId,
-                "function.code": functionCode,
-                "dimensions": dimensions,
-                "arrangements": arrangements
-            },
-            {
-                "$setOnInsert": {
-                    "clientId": clientId,
-                    "userId": userId,
-                    "system": system,
-                    "function": {
-                        "code": functionCode,
-                        "permissionMask": permissionMask,
-                        "limit": limit
-                    },
-                    "dimensions": dimensions,
-                    "arrangements": arrangements,
-                    "createdAt": datetime.utcnow()
-                }
-            },
-            upsert=True
-        )
-
-    cascade_and_diff(clientId, [userId], mutation)
+def ui_init_discovery():
+    cid = "CLIENT_1"
+    db.client_entitlements.update_one({"clientId": cid}, {"$set": {"allowedFunctions": ["FN_1", "FN_2"], "globalMaxLimit": 5000}}, upsert=True)
+    db.dimension_arrangement_map.update_one({"clientId": cid, "dimensionValue": "PRODUCT_1"}, {"$set": {"arrangements": ["ACC_101", "ACC_102"]}}, upsert=True)
+    print("✅ Discovery Data Initialized.")
 
 # =====================================================
-# MENU
-# =====================================================
-MENU = {
-    "a": add_user_to_role,
-    "b": remove_user_from_role,
-    "c": modify_role,
-    "d": add_dimension_to_role,
-    "e": add_two_roles_same_mask_diff_limit,
-    "g": add_dimension_to_user,
-}
-
-# =====================================================
-# ENTRY
+# MAIN MENU
 # =====================================================
 if __name__ == "__main__":
+    menu = {
+        "a": ui_add_user_to_role, "b": ui_remove_user_from_role, 
+        "c": ui_add_role_dimension, "d": ui_add_role_dimension, 
+        "g": lambda: run_op("CLIENT_1", select_from_db("dimension_definitions", {}, "system", "System"), [select_from_db("users", {"clientId": "CLIENT_1"}, "_id", "User")], lambda s: db.users.update_one({"_id": select_from_db("users", {"clientId": "CLIENT_1"}, "_id", "User")}, {"$set": {"mode": "CUSTOM"}}, session=s)),
+        "h": lambda: db.roles.update_one({"_id": input("New ID: "), "clientId": "CLIENT_1"}, {"$set": {"system": select_from_db("dimension_definitions", {}, "system", "System")}}, upsert=True),
+        "i": ui_inspect_system, "j": ui_clone_grants, "k": lambda: run_op("CLIENT_1", select_from_db("dimension_definitions", {}, "system", "System"), db.user_roles.distinct("userId"), lambda s: None),
+        "l": lambda: (db.effective_entitlements.delete_many({}), print("💥 Wiped.")),
+        "m": ui_bitwise_demo, "n": ui_access_pattern_browser, "setup": ui_init_discovery
+    }
     while True:
-        print("""
-========= DELTA ENTITLEMENT MENU =========
-a. Add user to role
-b. Remove user from role
-c. Modify role
-d. Add one dimension to role
-e. Add two roles (same mask, different limit)
-g. Add one dimension to user
-q. Quit
-""")
-        choice = input("Select option: ").strip().lower()
-        if choice == "q":
-            break
-        if choice in MENU:
-            try:
-                MENU[choice]()
-            except Exception as e:
-                print("❌ ERROR:", e)
-        else:
-            print("Invalid option")
+        print("\n=== TRANSACTIONAL ENTITLEMENT ENGINE ===")
+        print("a. Assign User   b. Remove User   c/d. Add Grant")
+        print("g. User Override h. Create Role   i. Inspect Sys")
+        print("j. Clone Grants  k. GLOBAL RECOMP k/l. Wipe/Rebuild")
+        print("m. BITWISE DEMO  n. PATTERN BROWSER setup. Init Discovery")
+        choice = input("Choice: ").lower()
+        if choice == 'q': break
+        if choice in menu: menu[choice]()
