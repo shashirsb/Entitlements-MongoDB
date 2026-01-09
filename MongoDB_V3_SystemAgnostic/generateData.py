@@ -31,7 +31,7 @@ db = client[DB_NAME]
 def check_state(*keys):
     for key in keys:
         if not state.get(key):
-            print(f"⚠️ Error: '{key}' is missing. Please run prerequisite steps (Steps 1-3).")
+            print(f"⚠️ Error: '{key}' is missing. Please run prerequisite steps.")
             return False
     return True
 
@@ -42,9 +42,6 @@ def prompt(msg):
     while True:
         v = input(msg).strip()
         if v: return v
-
-def rand_value(name):
-    return f"{name.upper()}_{random.randint(1, 5)}"
 
 def rand_mask():
     return DENY_BIT if random.random() < 0.15 else random.choice(ALLOW_MASKS)
@@ -61,9 +58,7 @@ def get_arrangement_keys(defn):
 
 def setup_indexes():
     db.effective_entitlements.create_index([("clientId", 1), ("userId", 1), ("system", 1)])
-    db.effective_entitlements.create_index([("clientId", 1), ("userId", 1), ("functionCode", 1)])
     db.trace.create_index([("clientId", 1), ("userId", 1), ("system", 1)])
-    db.user_roles.create_index([("clientId", 1), ("userId", 1), ("system", 1)])
     db.user_roles.create_index([("clientId", 1), ("userId", 1), ("roleId", 1)], unique=True)
     db.role_entitlements.create_index([("clientId", 1), ("roleId", 1), ("system", 1)])
     print("✓ Indexes ensured")
@@ -71,20 +66,56 @@ def setup_indexes():
 def startup_mode():
     print("\n1. Truncate existing data\n2. Cancel")
     if prompt("Select option: ") == "1":
-        for c in ["clients","users","roles","user_roles","role_entitlements","user_entitlements","effective_entitlements","trace"]:
+        for c in ["clients","users","roles","user_roles","role_entitlements",
+                  "user_entitlements","effective_entitlements","trace", 
+                  "dimensions", "arrangements"]:
             if c in db.list_collection_names(): db[c].delete_many({})
-        print("🧹 Truncated")
+        print("🧹 Truncated all collections")
 
 def select_dimension_definition():
     defs = list(db.dimension_definitions.find({}, {"_id": 0}))
     if not defs:
-        print("❌ No definitions found.")
+        print("❌ No definitions found. Run generateDim.py first.")
         return
     for i, d in enumerate(defs):
         print(f"[{i}] {minify(d)}")
     idx = int(prompt("\nSelect definition index: "))
     state["defn"] = defs[idx]
     print(f"✅ Selected System: {state['defn']['system']}")
+
+# --- NEW ENTITY: DIMENSIONS MASTER DATA ---
+def create_dimensions_master():
+    if not check_state("cid", "defn"): return
+    system = state["defn"]["system"]
+    dim_keys = state["defn"]["dimensions"]
+    
+    print(f"Generating master dimensions for {system}...")
+    for i in range(1, 6):
+        doc = {
+            "clientId": state["cid"],
+            "system": system,
+            "functionCode": f"FN_{i}",
+            "values": {dk: f"{dk.upper()}_{i}" for dk in dim_keys}
+        }
+        db.dimensions.insert_one(doc)
+    print("✅ Created 5 Dimension master records (FN_1 to FN_5)")
+
+# --- NEW ENTITY: ARRANGEMENTS MASTER DATA ---
+def create_arrangements_master():
+    if not check_state("cid", "defn"): return
+    arr_keys = get_arrangement_keys(state["defn"])
+    if not arr_keys:
+        print("ℹ️ No arrangement keys defined for this system.")
+        return
+
+    for i in range(1, 6):
+        doc = {
+            "clientId": state["cid"],
+            "system": state["defn"]["system"],
+            "values": {ak: f"ACC_{i}" for ak in arr_keys}
+        }
+        db.arrangements.insert_one(doc)
+    print("✅ Created 5 Arrangement master records (ACC_1 to ACC_5)")
 
 def create_client_step():
     if not check_state("defn"): return
@@ -102,7 +133,7 @@ def create_users_step():
     for u in users:
         db.users.update_one({"_id": u["_id"]}, {"$set": u}, upsert=True)
     state["users"] = users
-    print(f"✅ {len(users)} Users created.")
+    print(f"✅ Users created.")
 
 def create_roles_step():
     if not check_state("cid", "defn"): return
@@ -128,79 +159,51 @@ def assign_user_roles_step():
 
 def create_role_entitlements_step():
     if not check_state("cid", "defn", "roles"): return
+    
+    # Fetch Master Data
+    master_dims = list(db.dimensions.find({"clientId": state["cid"]}))
+    master_arrs = list(db.arrangements.find({"clientId": state["cid"]}))
+    
+    if not master_dims:
+        print("❌ Error: No master dimensions found. Run step 3 first.")
+        return
+
     for r in state["roles"]:
+        # Pick random master data for grants
         for _ in range(GRANTS_PER_ROLE):
+            dim_sample = random.choice(master_dims)
+            arr_sample = random.choice(master_arrs) if master_arrs else {"values": {}}
+            
             grant = {
                 "clientId": state["cid"], "roleId": r["_id"], "system": state["defn"]["system"],
-                "function": {"code": rand_value("fn"), "permissionMask": rand_mask(), "limit": rand_limit()},
-                "dimensions": {d: rand_value(d) for d in state["defn"]["dimensions"]},
-                "arrangements": {a: rand_value(a) for a in get_arrangement_keys(state["defn"])}
+                "function": {"code": dim_sample["functionCode"], "permissionMask": rand_mask(), "limit": rand_limit()},
+                "dimensions": dim_sample["values"],
+                "arrangements": arr_sample["values"]
             }
             db.role_entitlements.insert_one(grant)
-    print("✅ Role entitlements generated.")
+    print("✅ Role entitlements generated using master data.")
 
 def create_user_overrides_step():
     if not check_state("cid", "users", "defn"): return
+    master_dims = list(db.dimensions.find({"clientId": state["cid"]}))
+    master_arrs = list(db.arrangements.find({"clientId": state["cid"]}))
+    
     count = 0
     for u in state["users"]:
         if u["mode"] != "CUSTOM": continue
         for _ in range(3):
+            dim_sample = random.choice(master_dims)
+            arr_sample = random.choice(master_arrs) if master_arrs else {"values": {}}
+            
             override = {
                 "clientId": state["cid"], "userId": u["_id"], "system": state["defn"]["system"],
-                "function": {"code": rand_value("fn"), "permissionMask": rand_mask(), "limit": rand_limit()},
-                "dimensions": {d: rand_value(d) for d in state["defn"]["dimensions"]},
-                "arrangements": {a: rand_value(a) for a in get_arrangement_keys(state["defn"])}
+                "function": {"code": dim_sample["functionCode"], "permissionMask": rand_mask(), "limit": rand_limit()},
+                "dimensions": dim_sample["values"],
+                "arrangements": arr_sample["values"]
             }
             db.user_entitlements.insert_one(override)
             count += 1
     print(f"✅ {count} User overrides generated.")
-
-def inherit_role_step():
-    if not check_state("cid", "defn"): return
-    
-    # 1. New Role Info
-    new_role_id = prompt("Enter ID for new inherited role (e.g. SUPER_ADMIN): ")
-    db.roles.update_one({"_id": new_role_id}, {"$set": {"clientId": state["cid"], "system": state["defn"]["system"]}}, upsert=True)
-    
-    # 2. Display existing roles
-    existing_roles = list(db.roles.find({"clientId": state["cid"], "system": state["defn"]["system"], "_id": {"$ne": new_role_id}}))
-    if not existing_roles:
-        print("❌ No other roles found to inherit from.")
-        return
-    
-    print("\n--- AVAILABLE ROLES TO INHERIT ---")
-    for i, r in enumerate(existing_roles):
-        print(f"[{i}] {r['_id']}")
-    
-    choices = prompt("Enter role indices to inherit (comma separated, e.g. 0,2): ").split(',')
-    
-    inherited_count = 0
-    for idx in choices:
-        parent_role_id = existing_roles[int(idx.strip())]["_id"]
-        # Fetch all entitlements from parent
-        parent_grants = list(db.role_entitlements.find({"roleId": parent_role_id}))
-        
-        for g in parent_grants:
-            g.pop("_id", None) # Remove parent Mongo ID
-            g["roleId"] = new_role_id # Reassign to new child role
-            db.role_entitlements.insert_one(g)
-            inherited_count += 1
-            
-    print(f"✅ Created role {new_role_id} inheriting {inherited_count} entitlements.")
-
-def generate_all_data():
-    print("\n🚀 Starting Automated Generation...")
-    startup_mode()
-    setup_indexes()
-    select_dimension_definition()
-    create_client_step()
-    create_users_step()
-    create_roles_step()
-    assign_user_roles_step()
-    create_role_entitlements_step()
-    create_user_overrides_step()
-    materialize_step()
-    print("\n🏁 All Data Generated Successfully!")
 
 def materialize_step():
     if not check_state("cid", "defn"): return
@@ -260,6 +263,36 @@ def materialize_step():
             })
     print("🚀 Materialization complete.")
 
+def inherit_role_step():
+    if not check_state("cid", "defn"): return
+    new_role_id = prompt("Enter ID for new inherited role: ")
+    db.roles.update_one({"_id": new_role_id}, {"$set": {"clientId": state["cid"], "system": state["defn"]["system"]}}, upsert=True)
+    existing_roles = list(db.roles.find({"clientId": state["cid"], "_id": {"$ne": new_role_id}}))
+    for i, r in enumerate(existing_roles): print(f"[{i}] {r['_id']}")
+    choices = prompt("Enter indices to inherit (e.g. 0,1): ").split(',')
+    for idx in choices:
+        parent_grants = list(db.role_entitlements.find({"roleId": existing_roles[int(idx.strip())]["_id"]}))
+        for g in parent_grants:
+            g.pop("_id", None)
+            g["roleId"] = new_role_id
+            db.role_entitlements.insert_one(g)
+    print(f"✅ Role {new_role_id} created with inherited grants.")
+
+def generate_all_data():
+    startup_mode()
+    setup_indexes()
+    select_dimension_definition()
+    create_client_step()
+    create_dimensions_master()
+    create_arrangements_master()
+    create_users_step()
+    create_roles_step()
+    assign_user_roles_step()
+    create_role_entitlements_step()
+    create_user_overrides_step()
+    materialize_step()
+    print("\n🏁 Batch Generation Complete.")
+
 # =====================================================
 # MAIN MENU
 # =====================================================
@@ -268,14 +301,16 @@ def main_menu():
         ("Clear Data / Setup Indexes", lambda: [startup_mode(), setup_indexes()]),
         ("Select Dimension Definition", select_dimension_definition),
         ("Create/Select Client", create_client_step),
+        ("Create Dimensions Master Data", create_dimensions_master),
+        ("Create Arrangements Master Data", create_arrangements_master),
         ("Create Users", create_users_step),
         ("Create Roles", create_roles_step),
         ("Assign User Roles", assign_user_roles_step),
-        ("Generate Role Entitlements", create_role_entitlements_step),
-        ("Generate User Entitlements (Overrides)", create_user_overrides_step),
+        ("Generate Role Entitlements (from Master)", create_role_entitlements_step),
+        ("Generate User Overrides (from Master)", create_user_overrides_step),
         ("Materialize Effective Entitlements", materialize_step),
         ("GENERATE ALL DATA (Batch)", generate_all_data),
-        ("Inherit Role (Create New from Existing)", inherit_role_step),
+        ("Inherit Role", inherit_role_step),
         ("Exit", sys.exit)
     ]
 
