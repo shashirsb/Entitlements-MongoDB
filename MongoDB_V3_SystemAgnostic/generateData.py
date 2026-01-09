@@ -2,36 +2,46 @@ import random
 import json
 from datetime import datetime
 from pymongo import MongoClient
+import sys
 
 # =====================================================
-# CONFIG
+# CONFIG & STATE
 # =====================================================
 MONGO_URI = "mongodb+srv://main_user:main_user1@demo.kssen.mongodb.net/?retryWrites=true&w=majority"
 DB_NAME = "entitlement_v3_agnostic"
 
 ROLES_PER_CLIENT = 3
 GRANTS_PER_ROLE = 3
-
 DENY_BIT = 0b1000
 ALLOW_MASKS = [1, 3]
 
-# =====================================================
-# DB INIT
-# =====================================================
+state = {
+    "defn": None,
+    "cid": None,
+    "users": [],
+    "roles": []
+}
+
 client = MongoClient(MONGO_URI)
 db = client[DB_NAME]
 
 # =====================================================
 # HELPERS
 # =====================================================
+def check_state(*keys):
+    for key in keys:
+        if not state.get(key):
+            print(f"⚠️ Error: '{key}' is missing. Please run prerequisite steps (Steps 1-3).")
+            return False
+    return True
+
 def minify(doc):
     return json.dumps(doc, separators=(",", ":"), default=str)
 
 def prompt(msg):
     while True:
         v = input(msg).strip()
-        if v:
-            return v
+        if v: return v
 
 def rand_value(name):
     return f"{name.upper()}_{random.randint(1, 5)}"
@@ -46,292 +56,248 @@ def get_arrangement_keys(defn):
     return defn.get("arrangements") or defn.get("dimensionMap") or []
 
 # =====================================================
-# INDEX SETUP
+# CORE LOGIC FUNCTIONS
 # =====================================================
+
 def setup_indexes():
-    # ---- effective_entitlements ----
     db.effective_entitlements.create_index([("clientId", 1), ("userId", 1), ("system", 1)])
     db.effective_entitlements.create_index([("clientId", 1), ("userId", 1), ("functionCode", 1)])
-
-    # ---- trace ----
     db.trace.create_index([("clientId", 1), ("userId", 1), ("system", 1)])
-
-    # ---- user_roles ----
     db.user_roles.create_index([("clientId", 1), ("userId", 1), ("system", 1)])
     db.user_roles.create_index([("clientId", 1), ("userId", 1), ("roleId", 1)], unique=True)
-
-    # ---- role_dimension_grants ----
-    db.role_dimension_grants.create_index([("clientId", 1), ("roleId", 1), ("system", 1)])
-
+    db.role_entitlements.create_index([("clientId", 1), ("roleId", 1), ("system", 1)])
     print("✓ Indexes ensured")
 
-# =====================================================
-# STARTUP MODE
-# =====================================================
 def startup_mode():
-    print("\n=== STARTUP MODE ===")
-    print("1. Truncate existing data (keep dimension_definitions)")
-    print("2. Append\n")
+    print("\n1. Truncate existing data\n2. Cancel")
+    if prompt("Select option: ") == "1":
+        for c in ["clients","users","roles","user_roles","role_entitlements","user_entitlements","effective_entitlements","trace"]:
+            if c in db.list_collection_names(): db[c].delete_many({})
+        print("🧹 Truncated")
 
-    if prompt("Select option (1 or 2): ") == "1":
-        for c in [
-            "clients","users","roles","user_roles",
-            "role_dimension_grants","user_dimension_overrides",
-            "effective_entitlements","trace"
-        ]:
-            if c in db.list_collection_names():
-                db[c].delete_many({})
-        print("🧹 Truncated\n")
-
-# =====================================================
-# STEP 1 — SELECT DIMENSION DEFINITION
-# =====================================================
 def select_dimension_definition():
     defs = list(db.dimension_definitions.find({}, {"_id": 0}))
     if not defs:
-        print("❌ No dimension definitions found. Please run generateDim.py first.")
-        exit()
-    print("\n=== AVAILABLE DIMENSION DEFINITIONS ===\n")
+        print("❌ No definitions found.")
+        return
     for i, d in enumerate(defs):
         print(f"[{i}] {minify(d)}")
-    return defs[int(prompt("\nSelect definition index: "))]
+    idx = int(prompt("\nSelect definition index: "))
+    state["defn"] = defs[idx]
+    print(f"✅ Selected System: {state['defn']['system']}")
 
-# =====================================================
-# STEP 2 — CORE ENTITIES
-# =====================================================
-def create_client(system):
+def create_client_step():
+    if not check_state("defn"): return
     cid = "CLIENT_1"
-    db.clients.update_one(
-        {"_id": cid},
-        {"$set": {"system": system, "createdAt": datetime.utcnow()}},
-        upsert=True
-    )
-    return cid
+    db.clients.update_one({"_id": cid}, {"$set": {"system": state["defn"]["system"], "createdAt": datetime.utcnow()}}, upsert=True)
+    state["cid"] = cid
+    print(f"✅ Client '{cid}' ready.")
 
-def create_users(cid, system):
+def create_users_step():
+    if not check_state("cid", "defn"): return
     users = [
-        {"_id": "USER_1", "clientId": cid, "system": system, "mode": "ROLE"},
-        {"_id": "USER_2", "clientId": cid, "system": system, "mode": "CUSTOM"},
+        {"_id": "USER_1", "clientId": state["cid"], "system": state["defn"]["system"], "mode": "ROLE"},
+        {"_id": "USER_2", "clientId": state["cid"], "system": state["defn"]["system"], "mode": "CUSTOM"},
     ]
     for u in users:
         db.users.update_one({"_id": u["_id"]}, {"$set": u}, upsert=True)
-    return users
+    state["users"] = users
+    print(f"✅ {len(users)} Users created.")
 
-def create_roles(cid, system):
+def create_roles_step():
+    if not check_state("cid", "defn"): return
     roles = []
     for i in range(ROLES_PER_CLIENT):
-        r = {"_id": f"{cid}_ROLE_{i}", "clientId": cid, "system": system}
+        r = {"_id": f"{state['cid']}_ROLE_{i}", "clientId": state['cid'], "system": state['defn']['system']}
         db.roles.update_one({"_id": r["_id"]}, {"$set": r}, upsert=True)
         roles.append(r)
-    return roles
+    state["roles"] = roles
+    print(f"✅ {len(roles)} Roles created.")
 
-def assign_user_roles(cid, system, users, roles):
-    for u in users:
-        if u["mode"] != "ROLE":
-            continue
-        for r in random.sample(roles, random.randint(1, len(roles))):
+def assign_user_roles_step():
+    if not check_state("cid", "users", "roles"): return
+    for u in state["users"]:
+        if u["mode"] != "ROLE": continue
+        for r in random.sample(state["roles"], random.randint(1, len(state["roles"]))):
             db.user_roles.update_one(
-                {"clientId": cid, "userId": u["_id"], "roleId": r["_id"]},
-                {"$set": {"system": system, "createdAt": datetime.utcnow()}},
+                {"clientId": state["cid"], "userId": u["_id"], "roleId": r["_id"]},
+                {"$set": {"system": state["defn"]["system"], "createdAt": datetime.utcnow()}},
                 upsert=True
             )
+    print("✅ Roles assigned.")
 
-# =====================================================
-# STEP 3 — ROLE DIMENSION GRANTS
-# =====================================================
-def create_role_dimension_grants(cid, defn, roles):
-    for r in roles:
+def create_role_entitlements_step():
+    if not check_state("cid", "defn", "roles"): return
+    for r in state["roles"]:
         for _ in range(GRANTS_PER_ROLE):
             grant = {
-                "clientId": cid,
-                "roleId": r["_id"],
-                "system": defn["system"],
-                "function": {
-                    "code": rand_value("fn"),
-                    "permissionMask": rand_mask(),
-                    "limit": rand_limit()
-                },
-                "dimensions": {d: rand_value(d) for d in defn["dimensions"]},
-                "arrangements": {a: rand_value(a) for a in get_arrangement_keys(defn)}
+                "clientId": state["cid"], "roleId": r["_id"], "system": state["defn"]["system"],
+                "function": {"code": rand_value("fn"), "permissionMask": rand_mask(), "limit": rand_limit()},
+                "dimensions": {d: rand_value(d) for d in state["defn"]["dimensions"]},
+                "arrangements": {a: rand_value(a) for a in get_arrangement_keys(state["defn"])}
             }
-            db.role_dimension_grants.update_one(
-                {
-                    "clientId": cid,
-                    "roleId": r["_id"],
-                    "system": defn["system"],
-                    "function.code": grant["function"]["code"],
-                    "dimensions": grant["dimensions"],
-                    "arrangements": grant["arrangements"]
-                },
-                {"$set": grant},
-                upsert=True
-            )
+            db.role_entitlements.insert_one(grant)
+    print("✅ Role entitlements generated.")
 
-# =====================================================
-# STEP 4 — USER OVERRIDES (CUSTOM MODE)
-# =====================================================
-def create_user_overrides(cid, users, defn):
-    for u in users:
-        if u["mode"] != "CUSTOM":
-            continue
+def create_user_overrides_step():
+    if not check_state("cid", "users", "defn"): return
+    count = 0
+    for u in state["users"]:
+        if u["mode"] != "CUSTOM": continue
+        for _ in range(3):
+            override = {
+                "clientId": state["cid"], "userId": u["_id"], "system": state["defn"]["system"],
+                "function": {"code": rand_value("fn"), "permissionMask": rand_mask(), "limit": rand_limit()},
+                "dimensions": {d: rand_value(d) for d in state["defn"]["dimensions"]},
+                "arrangements": {a: rand_value(a) for a in get_arrangement_keys(state["defn"])}
+            }
+            db.user_entitlements.insert_one(override)
+            count += 1
+    print(f"✅ {count} User overrides generated.")
 
-        override = {
-            "clientId": cid,
-            "userId": u["_id"],
-            "system": defn["system"],
-            "function": {
-                "code": rand_value("fn"),
-                "permissionMask": rand_mask(),
-                "limit": rand_limit()
-            },
-            "dimensions": {d: rand_value(d) for d in defn["dimensions"]},
-            "arrangements": {a: rand_value(a) for a in get_arrangement_keys(defn)}
-        }
+def inherit_role_step():
+    if not check_state("cid", "defn"): return
+    
+    # 1. New Role Info
+    new_role_id = prompt("Enter ID for new inherited role (e.g. SUPER_ADMIN): ")
+    db.roles.update_one({"_id": new_role_id}, {"$set": {"clientId": state["cid"], "system": state["defn"]["system"]}}, upsert=True)
+    
+    # 2. Display existing roles
+    existing_roles = list(db.roles.find({"clientId": state["cid"], "system": state["defn"]["system"], "_id": {"$ne": new_role_id}}))
+    if not existing_roles:
+        print("❌ No other roles found to inherit from.")
+        return
+    
+    print("\n--- AVAILABLE ROLES TO INHERIT ---")
+    for i, r in enumerate(existing_roles):
+        print(f"[{i}] {r['_id']}")
+    
+    choices = prompt("Enter role indices to inherit (comma separated, e.g. 0,2): ").split(',')
+    
+    inherited_count = 0
+    for idx in choices:
+        parent_role_id = existing_roles[int(idx.strip())]["_id"]
+        # Fetch all entitlements from parent
+        parent_grants = list(db.role_entitlements.find({"roleId": parent_role_id}))
+        
+        for g in parent_grants:
+            g.pop("_id", None) # Remove parent Mongo ID
+            g["roleId"] = new_role_id # Reassign to new child role
+            db.role_entitlements.insert_one(g)
+            inherited_count += 1
+            
+    print(f"✅ Created role {new_role_id} inheriting {inherited_count} entitlements.")
 
-        db.user_dimension_overrides.update_one(
-            {
-                "clientId": cid,
-                "userId": u["_id"],
-                "system": defn["system"],
-                "function.code": override["function"]["code"],
-                "dimensions": override["dimensions"],
-                "arrangements": override["arrangements"]
-            },
-            {"$set": override},
-            upsert=True
-        )
+def generate_all_data():
+    print("\n🚀 Starting Automated Generation...")
+    startup_mode()
+    setup_indexes()
+    select_dimension_definition()
+    create_client_step()
+    create_users_step()
+    create_roles_step()
+    assign_user_roles_step()
+    create_role_entitlements_step()
+    create_user_overrides_step()
+    materialize_step()
+    print("\n🏁 All Data Generated Successfully!")
 
-# =====================================================
-# STEP 5 — EFFECTIVE ENTITLEMENTS (MATERIALIZATION)
-# =====================================================
-def materialize_effective_entitlements(cid, defn):
+def materialize_step():
+    if not check_state("cid", "defn"): return
+    
+    cid, defn = state["cid"], state["defn"]
     system = defn["system"]
+    
     users = list(db.users.find({"clientId": cid, "system": system}))
     user_roles = list(db.user_roles.find({"clientId": cid, "system": system}))
-    grants = list(db.role_dimension_grants.find({"clientId": cid, "system": system}))
-    overrides = list(db.user_dimension_overrides.find({"clientId": cid, "system": system}))
+    grants = list(db.role_entitlements.find({"clientId": cid, "system": system}))
+    overrides = list(db.user_entitlements.find({"clientId": cid, "system": system}))
 
     grants_by_role = {}
-    for g in grants:
-        grants_by_role.setdefault(g["roleId"], []).append(g)
-
+    for g in grants: grants_by_role.setdefault(g["roleId"], []).append(g)
     overrides_by_user = {}
-    for o in overrides:
-        overrides_by_user.setdefault(o["userId"], []).append(o)
+    for o in overrides: overrides_by_user.setdefault(o["userId"], []).append(o)
 
     for u in users:
-        uid = u["_id"]
-        mode = u["mode"]
-
+        uid, mode = u["_id"], u["mode"]
         sources = []
         if mode == "CUSTOM":
-            for o in overrides_by_user.get(uid, []):
-                sources.append(("CUSTOM", None, o))
+            for o in overrides_by_user.get(uid, []): sources.append(("CUSTOM", None, o))
         else:
             for ur in user_roles:
                 if ur["userId"] == uid:
-                    for g in grants_by_role.get(ur["roleId"], []):
-                        sources.append(("ROLE", ur["roleId"], g))
+                    for g in grants_by_role.get(ur["roleId"], []): sources.append(("ROLE", ur["roleId"], g))
 
         grouped = {}
         for src, rid, g in sources:
-            key = (
-                g["function"]["code"],
-                tuple(sorted(g["dimensions"].items())),
-                tuple(sorted(g["arrangements"].items()))
-            )
+            key = (g["function"]["code"], tuple(sorted(g["dimensions"].items())), tuple(sorted(g["arrangements"].items())))
             grouped.setdefault(key, []).append((src, rid, g))
 
         for (fn, dims, arrs), entries in grouped.items():
-            deny = False
-            mask_or = 0
-            winning_limit = None
-            winner_role = None
-            trace_entries = []
-
+            deny, mask_or, winning_limit, winner_role, trace_entries = False, 0, None, None, []
             for src, rid, g in entries:
                 f = g["function"]
-                if f["permissionMask"] & DENY_BIT:
-                    deny = True
+                if f["permissionMask"] & DENY_BIT: deny = True
                 mask_or |= f["permissionMask"]
-
-                if mode == "CUSTOM":
-                    winning_limit = f["limit"]
+                if mode == "CUSTOM": winning_limit = f["limit"]
                 else:
                     if winning_limit is None or f["limit"] < winning_limit:
-                        winning_limit = f["limit"]
-                        winner_role = rid
-
-                trace_entries.append({
-                    "source": src,
-                    "roleId": rid,
-                    "mask": f["permissionMask"],
-                    "limit": f["limit"]
-                })
+                        winning_limit, winner_role = f["limit"], rid
+                trace_entries.append({"source": src, "roleId": rid, "mask": f["permissionMask"], "limit": f["limit"]})
 
             effective = {
-                "clientId": cid,
-                "userId": uid,
-                "system": system,
-                "functionCode": fn,
-                "sourceMode": mode,
-                "effectiveMask": DENY_BIT if deny else mask_or,
-                "effectiveLimit": winning_limit,
-                "dimensions": dict(dims),
-                "arrangements": dict(arrs),
-                "generatedAt": datetime.utcnow()
+                "clientId": cid, "userId": uid, "system": system, "functionCode": fn, "sourceMode": mode,
+                "effectiveMask": DENY_BIT if deny else mask_or, "effectiveLimit": winning_limit,
+                "dimensions": dict(dims), "arrangements": dict(arrs), "generatedAt": datetime.utcnow()
             }
-
-            if mode == "ROLE":
-                effective["roleId"] = winner_role
-
+            if mode == "ROLE": effective["roleId"] = winner_role
             db.effective_entitlements.update_one(
-                {
-                    "clientId": cid,
-                    "userId": uid,
-                    "system": system,
-                    "functionCode": fn,
-                    "dimensions": dict(dims),
-                    "arrangements": dict(arrs)
-                },
-                {"$set": effective},
-                upsert=True
+                {"clientId": cid, "userId": uid, "system": system, "functionCode": fn, "dimensions": dict(dims), "arrangements": dict(arrs)},
+                {"$set": effective}, upsert=True
             )
-
             db.trace.insert_one({
-                "clientId": cid,
-                "userId": uid,
-                "system": system,
-                "functionCode": fn,
-                "dimensions": dict(dims),
-                "arrangements": dict(arrs),
-                "entries": trace_entries,
-                "generatedAt": datetime.utcnow()
+                "clientId": cid, "userId": uid, "system": system, "functionCode": fn, "dimensions": dict(dims), "arrangements": dict(arrs), "entries": trace_entries, "generatedAt": datetime.utcnow()
             })
+    print("🚀 Materialization complete.")
 
 # =====================================================
-# MAIN
+# MAIN MENU
 # =====================================================
-def generate():
-    startup_mode()
-    setup_indexes()
+def main_menu():
+    options = [
+        ("Clear Data / Setup Indexes", lambda: [startup_mode(), setup_indexes()]),
+        ("Select Dimension Definition", select_dimension_definition),
+        ("Create/Select Client", create_client_step),
+        ("Create Users", create_users_step),
+        ("Create Roles", create_roles_step),
+        ("Assign User Roles", assign_user_roles_step),
+        ("Generate Role Entitlements", create_role_entitlements_step),
+        ("Generate User Entitlements (Overrides)", create_user_overrides_step),
+        ("Materialize Effective Entitlements", materialize_step),
+        ("GENERATE ALL DATA (Batch)", generate_all_data),
+        ("Inherit Role (Create New from Existing)", inherit_role_step),
+        ("Exit", sys.exit)
+    ]
 
-    defn = select_dimension_definition()
-    system = defn["system"]
-    print(f"\n▶ Selected Definition for System: {system}")
+    while True:
+        print("\n--- ENTITLEMENT MANAGEMENT MENU ---")
+        for i, (label, _) in enumerate(options):
+            print(f"[{i:2}] {label}")
+        
+        curr_sys = state['defn']['system'] if state['defn'] else 'None'
+        curr_cid = state['cid'] or 'None'
+        print(f"\nContext: [System: {curr_sys}] [Client: {curr_cid}]")
 
-    cid = create_client(system)
-    users = create_users(cid, system)
-    roles = create_roles(cid, system)
-    assign_user_roles(cid, system, users, roles)
-    create_role_dimension_grants(cid, defn, roles)
-    create_user_overrides(cid, users, defn)
-    materialize_effective_entitlements(cid, defn)
-
-    print("\n✅ Generation complete")
-    print(f"System: {system}")
-    print("USER_1 → ROLE mode")
-    print("USER_2 → CUSTOM mode")
+        try:
+            choice = int(prompt("Select action: "))
+            if 0 <= choice < len(options):
+                options[choice][1]()
+            else:
+                print("❌ Invalid choice.")
+        except Exception as e:
+            print(f"❌ Error: {e}")
+            import traceback
+            traceback.print_exc()
 
 if __name__ == "__main__":
-    generate()
+    main_menu()

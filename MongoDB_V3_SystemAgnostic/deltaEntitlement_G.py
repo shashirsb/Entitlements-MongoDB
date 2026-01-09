@@ -104,10 +104,10 @@ def recompute_user_minimal(session, clientId, userId, system):
     before_map = {get_id_string(system, d["functionCode"], d.get("dimensions", {}), d.get("arrangements", {})): d for d in current_docs}
 
     if mode == "CUSTOM":
-        sources = list(db.user_dimension_overrides.find({"clientId": clientId, "userId": userId, "system": system}, session=session))
+        sources = list(db.user_entitlements.find({"clientId": clientId, "userId": userId, "system": system}, session=session))
     else:
         role_ids = [r["roleId"] for r in db.user_roles.find({"clientId": clientId, "userId": userId, "system": system}, session=session)]
-        sources = list(db.role_dimension_grants.find({"clientId": clientId, "roleId": {"$in": role_ids}, "system": system}, session=session))
+        sources = list(db.role_entitlements.find({"clientId": clientId, "roleId": {"$in": role_ids}, "system": system}, session=session))
 
     grouped = {}
     for s in sources:
@@ -239,7 +239,7 @@ def ui_inspect_system():
     for r in db.roles.find({"clientId": cid, "system": sys_n}):
         rid = r["_id"]
         u_assoc = [ur["userId"] for ur in db.user_roles.find({"roleId": rid, "system": sys_n})]
-        print(f"Role: {rid:<25} | Grants: {db.role_dimension_grants.count_documents({'roleId': rid, 'system': sys_n})} | Users: {', '.join(u_assoc) if u_assoc else '0'}")
+        print(f"Role: {rid:<25} | Grants: {db.role_entitlements.count_documents({'roleId': rid, 'system': sys_n})} | Users: {', '.join(u_assoc) if u_assoc else '0'}")
     print(f"\n--- USER PERSPECTIVE ---")
     for u in db.users.find({"clientId": cid}):
         roles = [ur["roleId"] for ur in db.user_roles.find({"userId": u["_id"], "system": sys_n})]
@@ -260,16 +260,16 @@ def ui_add_role_dimension():
     fn, mask, lim = input("Fn: "), int(input("Mask: ")), int(input("Limit: "))
     dims, arrs = prompt_dict("Dims"), prompt_dict("Arrs")
     impacted = [ur["userId"] for ur in db.user_roles.find({"roleId": rid, "system": sys_n})]
-    run_op(cid, sys_n, impacted, lambda s: db.role_dimension_grants.update_one({"clientId": cid, "roleId": rid, "system": sys_n, "function.code": fn, "dimensions": dims}, {"$set": {"function": {"code": fn, "permissionMask": mask, "limit": lim}, "arrangements": arrs, "system": sys_n}}, upsert=True, session=s))
+    run_op(cid, sys_n, impacted, lambda s: db.role_entitlements.update_one({"clientId": cid, "roleId": rid, "system": sys_n, "function.code": fn, "dimensions": dims}, {"$set": {"function": {"code": fn, "permissionMask": mask, "limit": lim}, "arrangements": arrs, "system": sys_n}}, upsert=True, session=s))
 
 def ui_clone_grants():
     cid, sys_n = get_context()
     src, dst = select_from_db("roles", {"clientId": cid, "system": sys_n}, "_id", "Src"), select_from_db("roles", {"clientId": cid, "system": sys_n}, "_id", "Dst")
-    grants = list(db.role_dimension_grants.find({"roleId": src, "system": sys_n}))
+    grants = list(db.role_entitlements.find({"roleId": src, "system": sys_n}))
     def mut(s):
         for g in grants:
             new_g = g.copy(); del new_g["_id"]; new_g["roleId"] = dst
-            db.role_dimension_grants.update_one({"roleId": dst, "function.code": g["function"]["code"], "dimensions": g["dimensions"]}, {"$set": new_g}, upsert=True, session=s)
+            db.role_entitlements.update_one({"roleId": dst, "function.code": g["function"]["code"], "dimensions": g["dimensions"]}, {"$set": new_g}, upsert=True, session=s)
     run_op(cid, sys_n, [ur["userId"] for ur in db.user_roles.find({"roleId": dst, "system": sys_n})], mut)
 
 def ui_bitwise_demo():
