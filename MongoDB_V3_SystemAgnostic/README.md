@@ -140,7 +140,8 @@ The system uses a "Materialized View" strategy. Permissions are defined in Roles
 | --- | --- |
 | `users` | Stores user identity and operation mode (`ROLE` or `CUSTOM`). |
 | `roles` | Groupings of permissions within a specific system. |
-| `role_dimension_grants` | The "Source of Truth" linking Roles to Functions, Masks, and Limits. |
+| `role_entitlements` | The "Source of Truth" linking Roles to Functions, Masks, and Limits. |
+| `user_entitlements` | The "Source of Truth" linking Users to Functions, Masks, and Limits. |
 | `effective_entitlements` | The **Materialized View** used by the application for access checks. |
 | `trace` | Audit logs storing `before` and `after` snapshots of every permission change. |
 
