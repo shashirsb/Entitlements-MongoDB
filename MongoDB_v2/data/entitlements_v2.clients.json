@@ -1,9 +1,0 @@
-[{
-  "_id": {
-    "$oid": "695b8afbc98c611412c8e3ab"
-  },
-  "clientId": "CLIENT_0",
-  "createdAt": {
-    "$date": "2026-01-05T09:57:15.563Z"
-  }
-}]

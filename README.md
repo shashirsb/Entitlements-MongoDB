@@ -1,322 +1,226 @@
+This `README.md` is designed to be GitHub-friendly, professional, and easy to follow. It provides a clear overview of the project structure, the entitlement logic, and a step-by-step guide on how to use the interactive management script.
 
 ---
 
-# Entitlement Engine — Event-Driven Effective Permission Compiler (v02)
+# Multi-System Agnostic Entitlement Engine (V3)
 
-This project implements an **enterprise-scale entitlement model** with:
+A flexible, dimension-based **Role-Based Access Control (RBAC)** and **Attribute-Based Access Control (ABAC)** engine powered by MongoDB. This project provides a system-agnostic way to define, grant, and materialize complex entitlements into high-performance "Effective Entitlements."
 
-* strict tenant isolation
-* user + group inheritance
-* deny-override semantics
-* event-driven recomputation
-* explainable, materialized **effective entitlements**
+## 🚀 Overview
 
-It supports **high-fan-out users**, heavy entitlement workloads, and real-time permission propagation.
+In modern enterprise applications, calculating user permissions on the fly is often slow due to complex inheritance and dimension overrides. This engine solves that by **materializing** permissions:
 
----
-
-## 🧩 Conceptual Model
-
-Entitlements answer four questions:
-
-| Question                      | Field                       |
-| ----------------------------- | --------------------------- |
-| **Who** is acting?            | `userId`                    |
-| **What actions** are allowed? | `permissionMask`            |
-| **Where** do they apply?      | `arrangementId / accountId` |
-| **Under which product?**      | `productCode`               |
-
-Permissions may be assigned:
-
-* **directly to users**
-* **indirectly via groups**
-
-All data is tenant-scoped by `clientId`.
+1. **RBAC:** Users are assigned roles; roles have entitlements.
+2. **ABAC/Overrides:** Specific users can have "Custom" overrides that bypass role logic.
+3. **Dimensions:** Permissions aren't just "Yes/No"; they are bound to dimensions (e.g., `Region: US`, `Product: Gold`) and arrangements.
+4. **Materialization:** The engine flattens these rules into an `effective_entitlements` collection for  lookups during API calls.
 
 ---
 
-## 🗂 Schema Overview
+## 📂 Project Structure
 
-### **users** — Who can act
+| File | Description |
+| --- | --- |
+| `generateDim.py` | **Setup Script:** Generates system-specific dimension definitions (e.g., SystemA, SystemB). |
+| `generateData.py` | **Interactive Tool:** The main management console to create clients, roles, users, and materialize data. |
+| `requirements.txt` | List of Python dependencies (primarily `pymongo`). |
 
-```json
-{
-  "_id": "...",
-  "clientId": "CLIENT_X",
-  "accessId": "user_123",
-  "status": "ACTIVE"
-}
+---
+
+## 🛠 Prerequisites
+
+* **Python 3.8+**
+* **MongoDB Atlas** (or local instance)
+* Dependencies installed via pip:
+```bash
+pip install pymongo
+
 ```
 
+
+
 ---
 
-### **user_groups** — Logical role containers
+## 📖 Operational Guide
 
-```json
-{
-  "_id": "...",
-  "clientId": "CLIENT_X",
-  "name": "ANALYST_OPS"
-}
+### 1. Define the System (Dimensions)
+
+Before generating data, you must define what "Dimensions" your system uses. Run the dimension generator:
+
+```bash
+python generateDim.py
+
 ```
 
----
+* This creates entries in the `dimension_definitions` collection.
+* Example: A "Trading" system might have dimensions like `AssetClass` and `Desk`.
 
-### **user_group_membership** — User → Group mapping
+### 2. Run the Management Console
 
-```json
-{
-  "clientId": "CLIENT_X",
-  "userId": "...",
-  "groupId": "..."
-}
-```
-
-A user may belong to **many groups**.
-
----
-
-### **products** — Capability definitions
-
-```json
-{
-  "clientId": "CLIENT_X",
-  "productCode": "TRADE",
-  "functions": {
-    "IMPM": 1,
-    "FFCCX": 2,
-    "FFAAPX": 4,
-    "DENY": 8
-  }
-}
-```
-
-Bit flags are used for compact permission masks.
-
----
-
-### **user_product_arrangement** — Direct user entitlements
-
-```json
-{
-  "clientId": "CLIENT_X",
-  "userId": "...",
-  "accountId": "ACC_001",
-  "productCode": "TRADE",
-  "permissionMask": 3
-}
-```
-
-Meaning:
-
-> This user may perform actions X,Y on this arrangement.
-
----
-
-### **group_product_arrangement** — Group-inherited entitlements
-
-```json
-{
-  "clientId": "CLIENT_X",
-  "groupId": "...",
-  "accountId": "ACC_001",
-  "productCode": "TRADE",
-  "permissionMask": 4
-}
-```
-
-Users inherit permissions from any groups they belong to.
-
----
-
-## 🚨 Deny Precedence
-
-If any assignment includes the **DENY bit**:
-
-```
-DENY overrides all other permissions
-```
-
-This ensures deterministic conflict resolution.
-
----
-
-## 🧮 Effective Permissions (Materialized Output)
-
-All merged permissions are written to:
-
-### **effective_entitlements**
-
-```json
-{
-  "clientId": "CLIENT_X",
-  "userId": "...",
-  "arrangementId": "ACC_001",
-  "productCode": "TRADE",
-  "effectiveMask": 8,
-  "deny": true,
-  "trace": [
-    { "source": "USER", "mask": 3 },
-    { "source": "GROUP:5f2a...", "mask": 8 }
-  ],
-  "lastUpdated": "2025-01-01T12:00:00Z"
-}
-```
-
-### ✔ One row per
-
-`(userId, arrangementId, productCode)`
-
-### ✔ Includes **trace history** for explainability
-
-Auditors can see:
-
-* where the permission came from
-* whether deny originated from a user or group
-* why a permission exists
-
----
-
-## ⚙️ Real-Time Recompute (Change-Stream Compiler)
-
-The compiler listens for writes to:
-
-* `user_product_arrangement`
-* `group_product_arrangement`
-* `user_group_membership`
-
-When a change occurs:
-
-1. Determine **which users are affected**
-2. Recompute only those users
-3. Update `effective_entitlements`
-
-This avoids:
-
-* full-table recomputes
-* stale security state
-* unnecessary compute load
-
-The system is:
-
-> **incremental, event-driven, and low-latency**
-
----
-
-## 🎛 Delta Operations (Test Harness Options a–j)
-
-The delta runner simulates real IAM change events.
-
-| Code  | Action                      | Who is recomputed            |
-| ----- | --------------------------- | ---------------------------- |
-| **a** | Add user to group           | that user                    |
-| **b** | Remove user from group      | that user                    |
-| **c** | Move user between groups    | that user                    |
-| **d** | Add entitlement to group    | all users in group           |
-| **e** | Modify group entitlement    | all users in group           |
-| **f** | Remove group entitlement    | all users in group           |
-| **g** | Add direct user entitlement | that user                    |
-| **h** | Remove user entitlement     | that user                    |
-| **i** | Modify user entitlement     | that user                    |
-| **j** | Execute batch deltas        | all impacted users (deduped) |
-
-These validate:
-
-* inheritance rules
-* deny-precedence behavior
-* merge correctness
-* recompute performance
-
----
-
-## 🧠 Permission Merge Algorithm
-
-For each `(arrangementId, productCode)`:
-
-1. Collect masks from:
-
-   * direct user entitlements
-   * group entitlements via membership
-2. OR-combine all bits
-3. If any mask contains **DENY → effectiveMask = DENY**
-4. Record all contributing sources in `trace[]`
-
----
-
-## 🏎 Why This Architecture Scales
-
-* tenant-scoped collections (shard-safe)
-* event-driven recompute (no full scans)
-* user-level materialization (O(1) reads)
-* compact bitmask permissions
-* explainable trace model
-* deterministic deny-override rules
-
-Supports environments with:
-
-* millions of entitlements
-* heavy-privilege users
-* frequent entitlement changes
-
----
-
-## 📦 Components
-
-| File                            | Purpose                                       |
-| ------------------------------- | --------------------------------------------- |
-| `generateData.py`               | Loads sample tenant / user / entitlement data |
-| `entitlement_compiler_v02.py`   | Real-time change-stream recompute engine      |
-| `deltaEntitlement.py` | Interactive delta test harness                |
-
----
-
-## 🧪 Running the System
-
-Generate Data:
+The core of the project is the interactive CLI. Run this to manage your data:
 
 ```bash
 python generateData.py
+
 ```
-
-Start the compiler:
-
-```bash
-python entitlement_compiler_v02.py
-```
-
-Run delta test harness:
-
-```bash
-python deltaEntitlement.py
-```
-
-Select options **a–j** to simulate entitlement changes.
 
 ---
 
-## 📝 License / Contributions
+## 🎮 Interactive Menu Options
 
-PRs welcome — especially around:
+Once you launch `generateData.py`, you will see the following menu:
 
-* optimization strategies
-* trace analytics
-* batching behavior
-* heavy-user scenarios
-
----
-
-## 📣 Questions / Enhancements
-
-Open a discussion or ask for:
-
-* architecture diagrams
-* performance tuning profiles
-* audit-report export format
-* Kubernetes deployment guide
+| Option | Action | Description |
+| --- | --- | --- |
+| **[0]** | **Clear Data** | Truncates all collections (except definitions) and ensures MongoDB indexes. |
+| **[1]** | **Select System** | Choose which system definition (e.g., SystemA) to work with. |
+| **[2-4]** | **Core Entities** | Create `CLIENT_1`, standard Users (`USER_1`, `USER_2`), and basic Roles. |
+| **[5]** | **Assign Roles** | Maps Users to Roles in the `user_roles` collection. |
+| **[6]** | **Role Grants** | Generates random entitlement rules for created Roles. |
+| **[7]** | **User Overrides** | Generates specific custom entitlements for users in `CUSTOM` mode. |
+| **[8]** | **Materialize** | **The Engine:** Computes the "winning" permission for every user/function and saves to `effective_entitlements`. |
+| **[9]** | **GENERATE ALL** | One-click execution of steps 0 through 8. |
+| **[10]** | **Inherit Role** | Create a new role (e.g., `MANAGER`) by selecting and merging existing roles. |
 
 ---
 
-If you want, I can also generate:
+## 🔍 Data Model & Logic
 
-* a **diagram version** of this README, or
-* a **diagram + PPT slide pack** for stakeholder briefings.
+### Permission Logic
+
+* **Allow/Deny:** We use a bitwise mask. `0b1000` (8) represents a **DENY**.
+* **Deny Priority:** If a user inherits three "Allow" masks but one "Deny" mask for the same dimension, the effective result is **DENY**.
+* **Limits:** For Roles, the engine takes the **minimum** numeric limit (most restrictive). For Custom overrides, the user-specific limit wins.
+
+### Traceability
+
+Every time you run **Materialization (Step 8)**, a record is created in the `trace` collection. This allows administrators to see exactly *why* a user was granted a certain permission (e.g., "Inherited from ROLE_1 and ROLE_2").
+
+---
+
+## 🛠 Configuration
+
+To point the script to your database, update the `MONGO_URI` and `DB_NAME` at the top of the scripts:
+
+```python
+MONGO_URI = "mongodb+srv://<user>:<password>@cluster.mongodb.net/..."
+DB_NAME = "entitlement_v3_agnostic"
+
+```
+
+---
+
+**Would you like me to add a section on how to query the materialized data using a sample Python snippet?**
+
+
+
+This **README.md** covers the entire project lifecycle, architecture, and the newly implemented Access Pattern Dashboard. It is designed to act as the primary documentation for the **Transactional Delta Entitlement Engine**.
+
+---
+
+# 🛡️ Transactional Delta Entitlement Engine (V14)
+
+A high-performance, **minimal-touch** entitlement engine built on MongoDB. This system manages complex permission sets using bitwise logic, ensures data integrity via ACID transactions, and provides a "Delta-only" update mechanism to reduce database I/O.
+
+## 🚀 Core Features
+
+* **Transactional Integrity:** All mutations (assigning roles, adding grants) and their subsequent recomputations are wrapped in **MongoDB Client Sessions**.
+* **Delta-Only Recompute:** The engine snapshots current state and only executes `UpdateOne` or `DeleteOne` operations if the permission mask or limits have actually changed.
+* **Security Circuit Breaker:** Uses a dominant **DENY_BIT (Bit 1)**. If any assigned role contains a 1, all other permissions are ignored, and the user is blocked.
+* **Multi-Dimension Support:** Entitlements are calculated based on a matrix of Function Codes, Dimensions (Product, Region), and Arrangements (Accounts).
+* **Access Pattern Dashboard:** Pre-built queries for common administrative requirements (Client Discovery, User Materialization).
+
+---
+
+## 🏗️ Architecture & Schema
+
+The system uses a "Materialized View" strategy. Permissions are defined in Roles but are pre-computed into an `effective_entitlements` collection for sub-millisecond runtime checks.
+
+| Collection | Role |
+| --- | --- |
+| `users` | Stores user identity and operation mode (`ROLE` or `CUSTOM`). |
+| `roles` | Groupings of permissions within a specific system. |
+| `role_entitlements` | The "Source of Truth" linking Roles to Functions, Masks, and Limits. |
+| `user_entitlements` | The "Source of Truth" linking Users to Functions, Masks, and Limits. |
+| `effective_entitlements` | The **Materialized View** used by the application for access checks. |
+| `trace` | Audit logs storing `before` and `after` snapshots of every permission change. |
+
+---
+
+## 🛠️ Access Patterns (Option `n`)
+
+The engine provides 5 standardized access patterns to browse the entitlement landscape:
+
+1. **Get Client Entitlements:** Fetches **all** materialized data for a specific `clientId`.
+2. **Client Dimension Discovery:** Finds all arrangements (e.g., Accounts) available to a client for a specific dimension (e.g., Product).
+3. **Client User List:** Lists all users associated with a specific client.
+4. **User Materialized State:** Detailed dump of everything a specific user is allowed to do.
+5. **Targeted User Arrangement:** Finds specific arrangements (Accounts) for a User + Product combo.
+
+---
+
+## 🚦 Bitwise Logic Decoder
+
+The system defaults to a **DENY_BIT = 1**. Here is the standard bit-map used for permissions:
+
+| Bit | Value | Permission |
+| --- | --- | --- |
+| **0** | **1** | **⛔ DENY (Circuit Breaker)** |
+| **1** | **2** | Write |
+| **2** | **4** | Approve |
+| **3** | **8** | Execute |
+
+**Example Calculation:**
+
+* Role A (Write: 2) + Role B (Approve: 4) = **Mask 6** (Write + Approve).
+* Role A (Write: 2) + Role C (Deny: 1) = **Mask 1** (Access Revoked).
+
+---
+
+## 💻 Installation & Setup
+
+1. **Prerequisites:** Python 3.8+ and a MongoDB Cluster (Atlas or Local).
+2. **Dependencies:** ```bash
+pip install pymongo
+```
+
+```
+
+
+3. **Configuration:** Update the `MONGO_URI` in `deltaEntitlement.py` with your credentials.
+4. **Initialization:** Run the script and use **Option i** to inspect the system or **Option setup** to initialize discovery data.
+
+---
+
+## 🎮 CLI Menu Guide
+
+| Option | Action |
+| --- | --- |
+| `a` | **Assign User:** Link a user to a role and trigger recompute. |
+| `b` | **Remove User:** Unlink a role and surgically delete entitlements. |
+| `g` | **Override:** Switch a user to `CUSTOM` mode for unique grants. |
+| `i` | **Inspect:** View the "Role Perspective" and "User Perspective." |
+| `k` | **Global Recompute:** Force-rebuild the materialized view for all users. |
+| `m` | **Bitwise Demo:** Test how different masks merge and trigger Deny logic. |
+| `n` | **Access Dashboard:** Run the 5 predefined Access Patterns. |
+
+---
+
+## 📜 Audit & Trace
+
+Every time the engine detects a "Delta" (a change in state), it inserts a document into the `trace` collection:
+
+```json
+{
+  "userId": "USER_0",
+  "event": "CHANGE",
+  "before": {"mask": 6, "limit": 1000},
+  "after": {"mask": 1, "limit": 1000},
+  "ts": "2026-01-09T..."
+}
+
+```
+
+---
+
+**Would you like me to generate a `docker-compose.yml` file to help you spin up a local MongoDB environment for testing this project?**
