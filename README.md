@@ -12,7 +12,7 @@ In modern enterprise applications, calculating user permissions on the fly is of
 
 1. **RBAC:** Users are assigned roles; roles have entitlements.
 2. **ABAC/Overrides:** Specific users can have "Custom" overrides that bypass role logic.
-3. **Dimensions:** Permissions aren't just "Yes/No"; they are bound to dimensions (e.g., `Region: US`, `Product: Gold`) and arrangements.
+3. **Dimensions:** Permissions aren't just "Yes/No"; they are bound to client_dimensions (e.g., `Region: US`, `Product: Gold`) and arrangements.
 4. **Materialization:** The engine flattens these rules into an `effective_entitlements` collection for  lookups during API calls.
 
 ---
@@ -53,7 +53,7 @@ python generateDim.py
 ```
 
 * This creates entries in the `dimension_definitions` collection.
-* Example: A "Trading" system might have dimensions like `AssetClass` and `Desk`.
+* Example: A "Trading" system might have client_dimensions like `AssetClass` and `Desk`.
 
 ### 2. Run the Management Console
 

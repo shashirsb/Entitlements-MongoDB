@@ -12,12 +12,12 @@ COLLECTION = "dimension_definitions"
 # =====================================================
 # HELPERS
 # =====================================================
-def compute_dim_key(system: str, dimensions: list) -> str:
+def compute_dim_key(system: str, client_dimensions: list) -> str:
     """
     dimKey = hash(system + sorted dimension names)
     Mapping fields (arrangements) are NOT part of identity
     """
-    raw = system + "|" + "|".join(sorted(dimensions))
+    raw = system + "|" + "|".join(sorted(client_dimensions))
     return hashlib.sha256(raw.encode()).hexdigest()[:32]
 
 
@@ -51,7 +51,7 @@ def main():
         print("Examples: function, product, channel, feature")
         print("Type 'done' when finished\n")
 
-        dimensions = []
+        client_dimensions = []
         while True:
             d = input("Dimension name: ").strip().lower()
             if d == "done":
@@ -61,13 +61,13 @@ def main():
                 print("❌ Dimension name cannot be empty")
                 continue
 
-            if d in dimensions:
+            if d in client_dimensions:
                 print("❌ Dimension already added")
                 continue
 
-            dimensions.append(d)
+            client_dimensions.append(d)
 
-        if not dimensions:
+        if not client_dimensions:
             print("\n❌ At least one dimension is required")
             return
 
@@ -93,11 +93,11 @@ def main():
             dimension_map.append(m)
 
         # ---- Build ----
-        dim_key = compute_dim_key(system, dimensions)
+        dim_key = compute_dim_key(system, client_dimensions)
 
         doc = {
             "system": system,
-            "dimensions": dimensions,
+            "client_dimensions": client_dimensions,
             "arrangements": dimension_map,
             "dimKey": dim_key
         }
@@ -112,7 +112,7 @@ def main():
         # ---- Result ----
         print("\n✅ Dimension hierarchy saved (UPSERT)")
         print(f"System        : {system}")
-        print(f"Dimensions    : {dimensions}")
+        print(f"Dimensions    : {client_dimensions}")
         print(f"Dimension Map : {dimension_map}")
         print(f"dimKey        : {dim_key}")
 

@@ -2,7 +2,7 @@ System
  └── DimensionDefinition
        ├── dimKey
        ├── system
-       ├── dimensions[]          (identity axes)
+       ├── client_dimensions[]          (identity axes)
        │      ├─ product
        │      ├─ menu
        │      ├─ channel
@@ -35,7 +35,7 @@ RoleDimensionGrant
  │      ├── code
  │      ├── permissionMask
  │      └── limit
- ├── dimensions { dynamic }
+ ├── client_dimensions { dynamic }
  │      ├── product
  │      ├── menu
  │      ├── channel
@@ -55,7 +55,7 @@ UserDimensionOverride   (CUSTOM users only)
  │      ├── code
  │      ├── permissionMask
  │      └── limit
- ├── dimensions { dynamic }
+ ├── client_dimensions { dynamic }
  ├── arrangements { dynamic }
  └── createdAt
 
@@ -69,7 +69,7 @@ EffectiveEntitlement
  ├── roleId?           (only when ROLE)
  ├── effectiveMask
  ├── effectiveLimit   (winner)
- ├── dimensions { dynamic }
+ ├── client_dimensions { dynamic }
  ├── arrangements { dynamic }
  └── generatedAt
 
@@ -78,7 +78,7 @@ Trace
  ├── clientId
  ├── userId
  ├── functionCode
- ├── dimensions
+ ├── client_dimensions
  ├── arrangements
  ├── entries[]
  │      ├── source     (ROLE or CUSTOM)

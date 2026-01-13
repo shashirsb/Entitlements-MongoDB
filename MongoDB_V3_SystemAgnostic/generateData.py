@@ -68,7 +68,7 @@ def startup_mode():
     if prompt("Select option: ") == "1":
         for c in ["clients","users","roles","user_roles","role_entitlements",
                   "user_entitlements","effective_entitlements","trace", 
-                  "dimensions", "arrangements"]:
+                  "client_dimensions", "arrangements"]:
             if c in db.list_collection_names(): db[c].delete_many({})
         print("🧹 Truncated all collections")
 
@@ -84,12 +84,12 @@ def select_dimension_definition():
     print(f"✅ Selected System: {state['defn']['system']}")
 
 # --- NEW ENTITY: DIMENSIONS MASTER DATA ---
-def create_dimensions_master():
+def create_client_dimensions_master():
     if not check_state("cid", "defn"): return
     system = state["defn"]["system"]
-    dim_keys = state["defn"]["dimensions"]
+    dim_keys = state["defn"]["client_dimensions"]
     
-    print(f"Generating master dimensions for {system}...")
+    print(f"Generating master client_dimensions for {system}...")
     for i in range(1, 6):
         doc = {
             "clientId": state["cid"],
@@ -97,7 +97,7 @@ def create_dimensions_master():
             "functionCode": f"FN_{i}",
             "values": {dk: f"{dk.upper()}_{i}" for dk in dim_keys}
         }
-        db.dimensions.insert_one(doc)
+        db.client_dimensions.insert_one(doc)
     print("✅ Created 5 Dimension master records (FN_1 to FN_5)")
 
 # --- NEW ENTITY: ARRANGEMENTS MASTER DATA ---
@@ -161,11 +161,11 @@ def create_role_entitlements_step():
     if not check_state("cid", "defn", "roles"): return
     
     # Fetch Master Data
-    master_dims = list(db.dimensions.find({"clientId": state["cid"]}))
+    master_dims = list(db.client_dimensions.find({"clientId": state["cid"]}))
     master_arrs = list(db.arrangements.find({"clientId": state["cid"]}))
     
     if not master_dims:
-        print("❌ Error: No master dimensions found. Run step 3 first.")
+        print("❌ Error: No master client_dimensions found. Run step 3 first.")
         return
 
     for r in state["roles"]:
@@ -177,7 +177,7 @@ def create_role_entitlements_step():
             grant = {
                 "clientId": state["cid"], "roleId": r["_id"], "system": state["defn"]["system"],
                 "function": {"code": dim_sample["functionCode"], "permissionMask": rand_mask(), "limit": rand_limit()},
-                "dimensions": dim_sample["values"],
+                "client_dimensions": dim_sample["values"],
                 "arrangements": arr_sample["values"]
             }
             db.role_entitlements.insert_one(grant)
@@ -185,7 +185,7 @@ def create_role_entitlements_step():
 
 def create_user_overrides_step():
     if not check_state("cid", "users", "defn"): return
-    master_dims = list(db.dimensions.find({"clientId": state["cid"]}))
+    master_dims = list(db.client_dimensions.find({"clientId": state["cid"]}))
     master_arrs = list(db.arrangements.find({"clientId": state["cid"]}))
     
     count = 0
@@ -198,7 +198,7 @@ def create_user_overrides_step():
             override = {
                 "clientId": state["cid"], "userId": u["_id"], "system": state["defn"]["system"],
                 "function": {"code": dim_sample["functionCode"], "permissionMask": rand_mask(), "limit": rand_limit()},
-                "dimensions": dim_sample["values"],
+                "client_dimensions": dim_sample["values"],
                 "arrangements": arr_sample["values"]
             }
             db.user_entitlements.insert_one(override)
@@ -233,7 +233,7 @@ def materialize_step():
 
         grouped = {}
         for src, rid, g in sources:
-            key = (g["function"]["code"], tuple(sorted(g["dimensions"].items())), tuple(sorted(g["arrangements"].items())))
+            key = (g["function"]["code"], tuple(sorted(g["client_dimensions"].items())), tuple(sorted(g["arrangements"].items())))
             grouped.setdefault(key, []).append((src, rid, g))
 
         for (fn, dims, arrs), entries in grouped.items():
@@ -251,15 +251,15 @@ def materialize_step():
             effective = {
                 "clientId": cid, "userId": uid, "system": system, "functionCode": fn, "sourceMode": mode,
                 "effectiveMask": DENY_BIT if deny else mask_or, "effectiveLimit": winning_limit,
-                "dimensions": dict(dims), "arrangements": dict(arrs), "generatedAt": datetime.utcnow()
+                "client_dimensions": dict(dims), "arrangements": dict(arrs), "generatedAt": datetime.utcnow()
             }
             if mode == "ROLE": effective["roleId"] = winner_role
             db.effective_entitlements.update_one(
-                {"clientId": cid, "userId": uid, "system": system, "functionCode": fn, "dimensions": dict(dims), "arrangements": dict(arrs)},
+                {"clientId": cid, "userId": uid, "system": system, "functionCode": fn, "client_dimensions": dict(dims), "arrangements": dict(arrs)},
                 {"$set": effective}, upsert=True
             )
             db.trace.insert_one({
-                "clientId": cid, "userId": uid, "system": system, "functionCode": fn, "dimensions": dict(dims), "arrangements": dict(arrs), "entries": trace_entries, "generatedAt": datetime.utcnow()
+                "clientId": cid, "userId": uid, "system": system, "functionCode": fn, "client_dimensions": dict(dims), "arrangements": dict(arrs), "entries": trace_entries, "generatedAt": datetime.utcnow()
             })
     print("🚀 Materialization complete.")
 
@@ -283,7 +283,7 @@ def generate_all_data():
     setup_indexes()
     select_dimension_definition()
     create_client_step()
-    create_dimensions_master()
+    create_client_dimensions_master()
     create_arrangements_master()
     create_users_step()
     create_roles_step()
@@ -301,13 +301,13 @@ def main_menu():
         ("Clear Data / Setup Indexes", lambda: [startup_mode(), setup_indexes()]),
         ("Select Dimension Definition", select_dimension_definition),
         ("Create/Select Client", create_client_step),
-        ("Create Dimensions Master Data", create_dimensions_master),
+        ("Create Dimensions Master Data", create_client_dimensions_master),
         ("Create Arrangements Master Data", create_arrangements_master),
         ("Create Users", create_users_step),
         ("Create Roles", create_roles_step),
         ("Assign User Roles", assign_user_roles_step),
         ("Generate Role Entitlements (from Master)", create_role_entitlements_step),
-        ("Generate User Overrides (from Master)", create_user_overrides_step),
+        ("Generate User Entitlements (from Master)", create_user_overrides_step),
         ("Materialize Effective Entitlements", materialize_step),
         ("GENERATE ALL DATA (Batch)", generate_all_data),
         ("Inherit Role", inherit_role_step),

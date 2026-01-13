@@ -101,7 +101,7 @@ def recompute_user_minimal(session, clientId, userId, system):
     mode = user.get("mode", "ROLE")
 
     current_docs = list(db.effective_entitlements.find({"clientId": clientId, "userId": userId, "system": system}, session=session))
-    before_map = {get_id_string(system, d["functionCode"], d.get("dimensions", {}), d.get("arrangements", {})): d for d in current_docs}
+    before_map = {get_id_string(system, d["functionCode"], d.get("client_dimensions", {}), d.get("arrangements", {})): d for d in current_docs}
 
     if mode == "CUSTOM":
         sources = list(db.user_entitlements.find({"clientId": clientId, "userId": userId, "system": system}, session=session))
@@ -111,7 +111,7 @@ def recompute_user_minimal(session, clientId, userId, system):
 
     grouped = {}
     for s in sources:
-        key = (s["function"]["code"], tuple(sorted(s["dimensions"].items())), tuple(sorted(s.get("arrangements", {}).items())))
+        key = (s["function"]["code"], tuple(sorted(s["client_dimensions"].items())), tuple(sorted(s.get("arrangements", {}).items())))
         grouped.setdefault(key, []).append(s)
 
     target_map, bulk_ee, bulk_trace = {}, [], []
@@ -132,7 +132,7 @@ def recompute_user_minimal(session, clientId, userId, system):
         target_doc = {
             "clientId": clientId, "userId": userId, "system": system, "functionCode": fn, "sourceMode": mode,
             "effectiveMask": DENY_BIT if deny else mask_or, "effectiveLimit": win_lim,
-            "dimensions": dims, "arrangements": arrs, "roleId": win_rid if mode == "ROLE" else None
+            "client_dimensions": dims, "arrangements": arrs, "roleId": win_rid if mode == "ROLE" else None
         }
         
         existing = before_map.get(ik)
@@ -147,7 +147,7 @@ def recompute_user_minimal(session, clientId, userId, system):
             
             print(f"   [{label}] {ik} ({' | '.join(diff) if diff else 'Initial'}) -> {decode_mask(target_doc['effectiveMask'])}")
             target_doc["generatedAt"] = datetime.utcnow()
-            bulk_ee.append(UpdateOne({"clientId": clientId, "userId": userId, "system": system, "functionCode": fn, "dimensions": dims, "arrangements": arrs}, {"$set": target_doc}, upsert=True))
+            bulk_ee.append(UpdateOne({"clientId": clientId, "userId": userId, "system": system, "functionCode": fn, "client_dimensions": dims, "arrangements": arrs}, {"$set": target_doc}, upsert=True))
             bulk_trace.append(InsertOne({"clientId": clientId, "userId": userId, "system": system, "event": label, "before": existing, "after": target_doc, "ts": datetime.utcnow()}))
         else:
             print(f"   [=] STABLE : {ik}")
@@ -182,7 +182,7 @@ def ui_access_pattern_browser():
             print("No materialized entitlements found for this client.")
         else:
             for entry in ee:
-                print(f" User: {entry['userId']:<12} | Fn: {entry['functionCode']:<10} | Mask: {entry['effectiveMask']} | Dims: {entry['dimensions']}")
+                print(f" User: {entry['userId']:<12} | Fn: {entry['functionCode']:<10} | Mask: {entry['effectiveMask']} | Dims: {entry['client_dimensions']}")
 
     elif choice == "2":
         # Pattern 2: Client Dimension Arrangement Discovery
@@ -190,7 +190,7 @@ def ui_access_pattern_browser():
         dv = input("Dimension Value (e.g., PRODUCT_5): ")
         print(f"\n--- 🔍 DISCOVERING ARRANGEMENTS: {cid} | {dk}:{dv} ---")
         # Logic: Find unique arrangements across all materialized users for this client/dimension
-        query = {"clientId": cid, f"dimensions.{dk}": dv}
+        query = {"clientId": cid, f"client_dimensions.{dk}": dv}
         results = db.effective_entitlements.distinct("arrangements", query)
         print(f"Found Arrangements: {results if results else 'None'}")
 
@@ -215,7 +215,7 @@ def ui_access_pattern_browser():
         dk = input("Dimension Key (e.g., product): ")
         dv = input("Dimension Value (e.g., PRODUCT_5): ")
         print(f"\n--- 📍 USER ARRANGEMENT LOOKUP: {uid} | {dk}:{dv} ---")
-        query = {"userId": uid, "clientId": cid, f"dimensions.{dk}": dv}
+        query = {"userId": uid, "clientId": cid, f"client_dimensions.{dk}": dv}
         ee = list(db.effective_entitlements.find(query))
         for entry in ee:
             print(f" Fn: {entry['functionCode']:<12} | Arrs: {entry.get('arrangements')}")
@@ -260,7 +260,7 @@ def ui_add_role_dimension():
     fn, mask, lim = input("Fn: "), int(input("Mask: ")), int(input("Limit: "))
     dims, arrs = prompt_dict("Dims"), prompt_dict("Arrs")
     impacted = [ur["userId"] for ur in db.user_roles.find({"roleId": rid, "system": sys_n})]
-    run_op(cid, sys_n, impacted, lambda s: db.role_entitlements.update_one({"clientId": cid, "roleId": rid, "system": sys_n, "function.code": fn, "dimensions": dims}, {"$set": {"function": {"code": fn, "permissionMask": mask, "limit": lim}, "arrangements": arrs, "system": sys_n}}, upsert=True, session=s))
+    run_op(cid, sys_n, impacted, lambda s: db.role_entitlements.update_one({"clientId": cid, "roleId": rid, "system": sys_n, "function.code": fn, "client_dimensions": dims}, {"$set": {"function": {"code": fn, "permissionMask": mask, "limit": lim}, "arrangements": arrs, "system": sys_n}}, upsert=True, session=s))
 
 def ui_clone_grants():
     cid, sys_n = get_context()
@@ -269,7 +269,7 @@ def ui_clone_grants():
     def mut(s):
         for g in grants:
             new_g = g.copy(); del new_g["_id"]; new_g["roleId"] = dst
-            db.role_entitlements.update_one({"roleId": dst, "function.code": g["function"]["code"], "dimensions": g["dimensions"]}, {"$set": new_g}, upsert=True, session=s)
+            db.role_entitlements.update_one({"roleId": dst, "function.code": g["function"]["code"], "client_dimensions": g["client_dimensions"]}, {"$set": new_g}, upsert=True, session=s)
     run_op(cid, sys_n, [ur["userId"] for ur in db.user_roles.find({"roleId": dst, "system": sys_n})], mut)
 
 def ui_bitwise_demo():

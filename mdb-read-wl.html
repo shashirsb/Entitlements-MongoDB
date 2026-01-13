@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enterprise MongoDB Atlas Sizer</title>
+    <style>
+      :root {
+        --primary: #00684a;
+        --secondary: #001e2b;
+        --accent: #00ed64;
+        --bg: #f0f2f1;
+        --border: #d1d9d6;
+        --danger: #d32f2f;
+      }
+
+      body {
+        font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: var(--bg);
+        color: var(--secondary);
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 100%;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 420px 1fr;
+        gap: 25px;
+      }
+
+      .sidebar {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+      .card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      h2 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-top: 0;
+        color: var(--primary);
+        border-bottom: 2px solid var(--bg);
+        padding-bottom: 8px;
+        margin-bottom: 15px;
+      }
+
+      .input-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 8px;
+      }
+
+      label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        margin-bottom: 3px;
+        color: #555;
+      }
+
+      input,
+      select {
+        padding: 8px 10px;
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        font-size: 0.85rem;
+        background: #fafafa;
+      }
+
+      .slider-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      input[type="range"] {
+        flex-grow: 1;
+        accent-color: var(--primary);
+      }
+      .slider-val {
+        font-size: 0.8rem;
+        font-weight: bold;
+        width: 100px;
+        text-align: right;
+      }
+
+      .main-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+      }
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        width: 100%;
+      }
+
+      .full-width-card {
+        grid-column: span 2;
+      }
+
+      .res-card {
+        background: var(--secondary);
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .res-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 0.9rem;
+      }
+
+      .res-label {
+        color: #a5b4fc;
+      }
+      .res-val {
+        color: var(--accent);
+        font-weight: 700;
+        font-family: "Consolas", monospace;
+      }
+
+      .highlight-bar {
+        background: white;
+        border-left: 5px solid var(--primary);
+        padding: 20px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        border-radius: 4px;
+        gap: 20px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .stat-group {
+        text-align: center;
+        flex: 1;
+      }
+      .stat-label {
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        color: #666;
+        font-weight: bold;
+        margin-bottom: 4px;
+      }
+      .stat-val {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var(--primary);
+        font-family: "Consolas", monospace;
+      }
+
+      .tier-specs {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        background: #eef2f0;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 15px;
+        border: 1px dashed var(--primary);
+      }
+      .spec-box {
+        text-align: center;
+        border-right: 1px solid #ccc;
+      }
+      .spec-box:last-child {
+        border-right: none;
+      }
+      .spec-label {
+        font-size: 0.6rem;
+        text-transform: uppercase;
+        color: #555;
+      }
+      .spec-val {
+        font-size: 0.95rem;
+        font-weight: bold;
+        color: var(--primary);
+      }
+
+      .formula-hint {
+        font-size: 0.65rem;
+        color: #777;
+        margin-top: 5px;
+        font-style: italic;
+        line-height: 1.2;
+      }
+
+      .bottleneck-active {
+        color: var(--danger) !important;
+        text-decoration: underline;
+      }
+
+      .infra-flex-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 2fr;
+        gap: 15px;
+        align-items: center;
+        margin-top: 15px;
+      }
+
+      .vertical-divider {
+        border-left: 1px solid #eee;
+        padding-left: 15px;
+      }
+
+      .final-result-box {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background: var(--bg);
+        padding: 12px;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="sidebar">
+        <div class="card">
+          <h2>1. Workload Variables</h2>
+          <div class="input-grid">
+            <div class="field">
+              <label>Avg Doc (KB)</label
+              ><input type="number" id="v_size" value="0.8" oninput="run()" />
+            </div>
+            <div class="field">
+              <label>Compression %</label
+              ><input type="number" id="v_comp" value="50" oninput="run()" />
+            </div>
+            <div class="field">
+              <label>New Docs / Day</label
+              ><input
+                type="number"
+                id="v_docsDay"
+                value="2000000000"
+                oninput="run()"
+              />
+            </div>
+            <div class="field">
+              <label>Retention (Days)</label
+              ><input type="number" id="v_ret" value="30" oninput="run()" />
+            </div>
+            <div class="field">
+              <label>Client Threads</label
+              ><input type="number" id="v_clients" value="60" oninput="run()" />
+            </div>
+            <div class="field">
+              <label>Docs / Read</label
+              ><input
+                type="number"
+                id="v_docsRead"
+                value="2000000000"
+                oninput="run()"
+              />
+            </div>
+            <div class="field">
+              <label>Max Read Time (s)</label
+              ><input
+                type="number"
+                id="v_maxTime"
+                value="1800"
+                oninput="run()"
+              />
+            </div>
+            <div class="field">
+              <label>Colocation %</label
+              ><input type="number" id="v_coloc" value="90" oninput="run()" />
+            </div>
+            <div class="field">
+              <label>Hot Data (Days)</label
+              ><input type="number" id="v_hot" value="2" oninput="run()" />
+            </div>
+            <div class="field">
+              <label>Net Latency (ms)</label
+              ><input type="number" id="v_netLat" value="1" oninput="run()" />
+            </div>
+            <div class="field">
+              <label>Cache/Shard (GB)</label
+              ><input
+                type="number"
+                id="v_cache"
+                readonly
+                style="background: #eee"
+              />
+            </div>
+            <div class="field">
+              <label>Cache Hit %</label>
+              <input type="number" id="v_cacheHit" value="95" oninput="run()" />
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>2. Database Constants</h2>
+          <div class="input-grid">
+            <div class="field">
+              <label>Page Size (KB)</label
+              ><input type="number" id="c_block" value="28" oninput="run()" />
+            </div>
+            <div class="field">
+              <label>per getmore (MB)</label
+              ><input type="number" id="c_getmore" value="16" oninput="run()" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-content">
+        <div class="card">
+          <h2>3. MongoDB Cluster Tier Selection</h2>
+          <div class="input-grid" style="grid-template-columns: 1fr 1fr 1fr">
+            <div class="field">
+              <label>Atlas Tier</label>
+              <select id="tierSelector" onchange="updateTierData()"></select>
+            </div>
+            <div class="field">
+              <label>Storage per Node (GB)</label>
+              <div class="slider-wrap">
+                <input type="range" id="s_storage" oninput="run()" />
+                <span class="slider-val" id="v_storage_disp">0 GB</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>Provisioned IOPS per Node</label>
+              <div class="slider-wrap">
+                <input type="range" id="s_iops" oninput="run()" />
+                <span class="slider-val" id="v_iops_disp">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tier-specs" id="tierDisplay">
+            <div class="spec-box">
+              <div class="spec-label">RAM</div>
+              <div class="spec-val" id="t_ram">-</div>
+            </div>
+            <div class="spec-box">
+              <div class="spec-label">vCPUs</div>
+              <div class="spec-val" id="t_vcpu">-</div>
+            </div>
+            <div class="spec-box">
+              <div class="spec-label">Storage Range</div>
+              <div class="spec-val" id="t_storage">-</div>
+            </div>
+            <div class="spec-box">
+              <div class="spec-label">Max IOPS (Selected)</div>
+              <div class="spec-val" id="t_iops">-</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-grid">
+          <div class="res-card">
+            <h2>Storage & Memory</h2>
+            <div class="res-item">
+              <span class="res-label">Total Data (GB)</span
+              ><span class="res-val" id="r_totalData">0</span>
+            </div>
+            <div class="res-item">
+              <span class="res-label">Storage Required (GB)</span
+              ><span class="res-val" id="r_storage">0</span>
+            </div>
+            <div class="res-item">
+              <span class="res-label">Hot Data (GB)</span
+              ><span class="res-val" id="r_hotData">0</span>
+            </div>
+            <div class="res-item">
+              <span class="res-label">Available Cache/Shard</span
+              ><span class="res-val" id="r_availCache">0</span>
+            </div>
+          </div>
+
+          <div class="res-card">
+            <h2>Query Logic</h2>
+            <div class="res-item">
+              <span class="res-label">Docs / Leaf Page</span
+              ><span class="res-val" id="r_leafDocs">0</span>
+            </div>
+            <div class="res-item">
+              <span class="res-label">Read Time Per Doc (ms)</span
+              ><span class="res-val" id="r_timeDoc">0</span>
+            </div>
+            <div class="res-item">
+              <span class="res-label">Net Latency (ms)</span
+              ><span class="res-val" id="r_netLag">0</span>
+            </div>
+            <div class="res-item">
+              <span class="res-label">Calculated RPS</span
+              ><span class="res-val" id="r_rps_val">0</span>
+            </div>
+          </div>
+
+          <div class="highlight-bar full-width-card">
+            <div class="stat-group">
+              <div class="stat-label">Total Doc Read Operations</div>
+              <div class="stat-val" id="r_totalDocReads">0</div>
+            </div>
+            <div class="stat-group">
+              <div class="stat-label">Total Doc Reads per second</div>
+              <div class="stat-val" id="r_rps">0</div>
+            </div>
+            <div class="stat-group">
+              <div class="stat-label">Total IOP Required</div>
+              <div class="stat-val" id="r_iopsReq">0</div>
+            </div>
+          </div>
+
+          <div class="res-card full-width-card" style="background: #fff; color: #333; border: 1px solid var(--border);">
+            <h2 style="color: var(--secondary)">Infrastructure Requirements (Shard Count)</h2>
+            <div class="infra-flex-row">
+              <div style="text-align: center">
+                <div class="stat-label">Shards (By Storage)</div>
+                <div class="stat-val" id="r_shardsStore">0</div>
+                <div class="formula-hint" id="f_shardsStore">-</div>
+              </div>
+              
+              <div style="text-align: center" class="vertical-divider">
+                <div class="stat-label">Shards (By RAM)</div>
+                <div class="stat-val" id="r_shardsRAM">0</div>
+                <div class="formula-hint" id="f_shardsRAM">-</div>
+              </div>
+
+              <div style="text-align: center" class="vertical-divider">
+                <div class="stat-label">Shards (By IOPS)</div>
+                <div class="stat-val" id="r_shardsIOPS">0</div>
+                <div class="formula-hint" id="f_shardsIOPS">-</div>
+              </div>
+
+              <div class="vertical-divider">
+                <div class="final-result-box">
+                  <div style="text-align: center">
+                    <div class="stat-label">Min Shards (<span id="r_bottleneck_label">0</span>)</div>
+                    <div id="r_bottleneck" style="font-size: 2.2rem; font-weight: 800; color: var(--primary);">0</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const mongoTiers = {
+        M10: { RAM: 2, Storage: 10, s_min: 10, s_max: 128, vCPU: 2, i_min: 1000, i_max: 1000 },
+        M20: { RAM: 4, Storage: 20, s_min: 10, s_max: 256, vCPU: 2, i_min: 2000, i_max: 2000 },
+        M30: { RAM: 8, Storage: 40, s_min: 10, s_max: 512, vCPU: 2, i_min: 100, i_max: 3600 },
+        M40: { RAM: 16, Storage: 80, s_min: 10, s_max: 4096, vCPU: 4, i_min: 100, i_max: 3000 },
+        M50: { RAM: 32, Storage: 160, s_min: 10, s_max: 8192, vCPU: 8, i_min: 100, i_max: 6000 },
+        M60: { RAM: 64, Storage: 320, s_min: 10, s_max: 8192, vCPU: 16, i_min: 100, i_max: 12000 },
+        M80: { RAM: 128, Storage: 750, s_min: 10, s_max: 14336, vCPU: 32, i_min: 100, i_max: 32000 },
+        M140: { RAM: 192, Storage: 1000, s_min: 10, s_max: 14336, vCPU: 48, i_min: 100, i_max: 50000 },
+        M200: { RAM: 256, Storage: 1500, s_min: 10, s_max: 14336, vCPU: 64, i_min: 100, i_max: 64000 },
+        M300: { RAM: 384, Storage: 2000, s_min: 10, s_max: 14336, vCPU: 96, i_min: 100, i_max: 64000 },
+        M400: { RAM: 512, Storage: 3000, s_min: 10, s_max: 14336, vCPU: 64, i_min: 100, i_max: 64000 },
+        M700: { RAM: 768, Storage: 4096, s_min: 10, s_max: 14336, vCPU: 96, i_min: 12288, i_max: 128000 },
+      };
+
+      function init() {
+        const selector = document.getElementById("tierSelector");
+        for (let tier in mongoTiers) {
+          let opt = document.createElement("option");
+          opt.value = tier;
+          opt.innerHTML = tier;
+          selector.appendChild(opt);
+        }
+        selector.value = "M40";
+        updateTierData();
+      }
+
+      function updateTierData() {
+        const tier = mongoTiers[document.getElementById("tierSelector").value];
+        document.getElementById("v_cache").value = tier.RAM / 2;
+        document.getElementById("t_ram").innerText = tier.RAM + " GB";
+        document.getElementById("t_vcpu").innerText = tier.vCPU;
+        document.getElementById("t_storage").innerText = tier.s_min + " - " + tier.s_max + " GB";
+        document.getElementById("t_iops").innerText = tier.i_max.toLocaleString("en-US");
+        const s_storage = document.getElementById("s_storage");
+        s_storage.min = tier.s_min;
+        s_storage.max = tier.s_max;
+        s_storage.value = tier.Storage;
+        const s_iops = document.getElementById("s_iops");
+        s_iops.min = tier.i_min;
+        s_iops.max = tier.i_max;
+        s_iops.value = tier.i_max;
+        run();
+      }
+
+      function run() {
+        const s_storage_val = parseFloat(document.getElementById("s_storage").value);
+        const s_iops_val = parseFloat(document.getElementById("s_iops").value);
+        document.getElementById("v_storage_disp").innerText = s_storage_val + " GB";
+        document.getElementById("v_iops_disp").innerText = s_iops_val.toLocaleString("en-US");
+
+        const v = {
+          cache: parseFloat(document.getElementById("v_cache").value),
+          cacheHit: parseFloat(document.getElementById("v_cacheHit").value) / 100,
+          size: parseFloat(document.getElementById("v_size").value),
+          comp: parseFloat(document.getElementById("v_comp").value) / 100,
+          docsDay: parseFloat(document.getElementById("v_docsDay").value),
+          ret: parseFloat(document.getElementById("v_ret").value),
+          clients: parseFloat(document.getElementById("v_clients").value),
+          docsRead: parseFloat(document.getElementById("v_docsRead").value),
+          maxTime: parseFloat(document.getElementById("v_maxTime").value),
+          coloc: parseFloat(document.getElementById("v_coloc").value) / 100,
+          hot: parseFloat(document.getElementById("v_hot").value),
+          netLat: parseFloat(document.getElementById("v_netLat").value),
+        };
+        const c = {
+          block: parseFloat(document.getElementById("c_block").value),
+          getmore: parseFloat(document.getElementById("c_getmore").value),
+        };
+
+        const totalDataGB = (v.docsDay * v.ret * v.size) / (1024 * 1024);
+        const storageGB = totalDataGB * v.comp;
+        const hotDataGB = (v.docsDay * v.hot * v.size * v.comp) / (1024 * 1024);
+        const leafDocs = c.block / (v.size * v.comp);
+        const totalDocReads = v.docsRead * v.clients;
+        const rps = totalDocReads / v.maxTime;
+        const dataPerReadGB = (v.docsRead * v.size) / (1024 * 1024);
+        const calls = (dataPerReadGB * 1024) / c.getmore;
+
+        // UPDATED LOGIC: IOPS required is only the fraction of reads that MISS the cache
+        const cacheMiss = 1 - v.cacheHit;
+        const iopsReq = (v.docsRead * cacheMiss) / (v.coloc === 0 ? 1 : leafDocs * (1 + (1 - v.coloc)));
+
+        const shardsByIOPS = iopsReq / (s_iops_val * v.maxTime);
+        const shardsByStorage = storageGB / s_storage_val;
+        const shardsByRAM = hotDataGB / v.cache;
+        const maxShards = Math.max(shardsByIOPS, shardsByStorage, shardsByRAM);
+        const bottleneck = Math.ceil(Math.max(maxShards, 1));
+        const timeTaken = iopsReq / (s_iops_val * bottleneck);
+
+        const latencyImpact = (calls * v.netLat) / (1000 * bottleneck);
+
+        const fmt = (num, dec = 2) => num.toLocaleString("en-US", { minimumFractionDigits: dec, maximumFractionDigits: dec });
+        const fmtInt = (num) => Math.floor(num).toLocaleString("en-US");
+
+        document.getElementById("r_totalData").innerText = fmt(totalDataGB);
+        document.getElementById("r_storage").innerText = fmt(storageGB);
+        document.getElementById("r_hotData").innerText = fmt(hotDataGB);
+        document.getElementById("r_availCache").innerText = fmt(v.cache) + " GB";
+        document.getElementById("r_leafDocs").innerText = fmt(leafDocs);
+        document.getElementById("r_timeDoc").innerText = fmt((v.maxTime * 1000) / v.docsRead, 6);
+        document.getElementById("r_netLag").innerText = fmtInt(calls * v.netLat);
+        document.getElementById("r_rps_val").innerText = fmtInt(rps);
+        document.getElementById("r_totalDocReads").innerText = fmtInt(totalDocReads / v.clients);
+        document.getElementById("r_rps").innerText = fmtInt(rps / v.clients);
+        document.getElementById("r_iopsReq").innerText = fmtInt(iopsReq);
+
+        const elStore = document.getElementById("r_shardsStore");
+        const elRAM = document.getElementById("r_shardsRAM");
+        const elIOPS = document.getElementById("r_shardsIOPS");
+        elStore.innerText = fmt(shardsByStorage, 2);
+        elRAM.innerText = fmt(shardsByRAM, 2);
+        elIOPS.innerText = fmt(shardsByIOPS, 2);
+
+        [elStore, elRAM, elIOPS].forEach((el) => el.classList.remove("bottleneck-active"));
+        if (shardsByStorage === maxShards) elStore.classList.add("bottleneck-active");
+        else if (shardsByRAM === maxShards) elRAM.classList.add("bottleneck-active");
+        else if (shardsByIOPS === maxShards) elIOPS.classList.add("bottleneck-active");
+
+        document.getElementById("f_shardsStore").innerText = `${fmt(storageGB, 1)}GB Data / ${s_storage_val}GB Node`;
+        document.getElementById("f_shardsRAM").innerText = `${fmt(hotDataGB, 1)}GB Hot / ${fmt(v.cache, 1)}GB Cache`;
+        document.getElementById("f_shardsIOPS").innerText = `${fmtInt(iopsReq)} IOPS / (${fmtInt(s_iops_val)}×${v.maxTime}s)`;
+
+        document.getElementById("r_bottleneck").innerText = bottleneck;
+        document.getElementById("r_bottleneck_label").innerText = bottleneck;
+      }
+
+      init();
+    </script>
+  </body>
+</html>
