@@ -86,3 +86,27 @@ Trace
  │      ├── mask
  │      └── limit
  └── generatedAt
+
+
+Client
+
+users > entitlements
+users > multiple roles
+
+roles > entitlements
+
+entitlements
+clientA
+      SystemA
+      [product > function (action)]
+      arragment: account
+ 
+      SystemB
+      product > funciton (action)
+
+      SystemC
+      Menu > function (action)
+
+
+
+1. fix the exclusive mapping custom or role
